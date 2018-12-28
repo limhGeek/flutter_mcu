@@ -1,18 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
+import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
+import 'package:flutter_mcu/utils/SpUtils.dart';
 import 'package:flutter_mcu/view/view_drawer.dart';
 import 'package:flutter_mcu/view/view_home.dart';
 import 'package:flutter_mcu/view/view_mine.dart';
 import 'package:flutter_mcu/view/view_study.dart';
 import 'package:flutter_mcu/view/view_tools.dart';
-import 'package:flutter/material.dart';
-import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   final store = Store<AppState>(appReducer,
-      initialState: AppState(themeData: ThemeData(primarySwatch: Colors.blue)));
+      initialState: AppState(
+          themeData: ThemeData(primarySwatch: Config.getThemeListColor()[0])));
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class MyApp extends StatelessWidget {
         store: store,
         child: StoreBuilder<AppState>(builder: (context, store) {
           return MaterialApp(
-            home: MyHomePage(),
+            home: MyHomePage(store),
             theme: store.state.themeData,
           );
         }));
@@ -28,6 +32,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  final store;
+
+  MyHomePage(this.store);
+
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
@@ -74,6 +82,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     pageController = new PageController(initialPage: this.page);
+    _getConfig();
+  }
+
+  //初始化全局配置
+  Future<Null> _getConfig() async {
+    int theme = await SpUtils.getTheme();
+    setState(() {
+      widget.store.dispatch(RefreshThemeDataAction(
+          ThemeData(primarySwatch: Config.getThemeListColor()[theme])));
+    });
   }
 
   void onTap(int index) {

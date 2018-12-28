@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
+import 'package:flutter_mcu/utils/SpUtils.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -89,6 +90,7 @@ class _MyDrawer extends State<MyDrawer> {
 
   _showThemeDialog(BuildContext context, Store store) {
     List<Color> color = Config.getThemeListColor();
+    List<String> themeDesc = Config.getThemeDesc();
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -119,13 +121,15 @@ class _MyDrawer extends State<MyDrawer> {
                             padding: EdgeInsets.all(10),
                             color: Colors.transparent,
                             child: Text(
-                              '主题',
+                              themeDesc[index],
                               style: TextStyle(
                                   color: Colors.white, fontSize: 14.0),
                             ),
                             onPressed: () {
+                              SpUtils.saveTheme(index);
                               store.dispatch(RefreshThemeDataAction(
                                   ThemeData(primarySwatch: color[index])));
+                              Navigator.pop(context);
                             },
                           ),
                         ),

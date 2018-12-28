@@ -4,17 +4,27 @@ class Config {
   static const DEGAULT_IMG =
       "http://img3.duitang.com/uploads/item/201601/14/20160114001813_LTUWP.thumb.700_0.jpeg";
 
-
-
   static List<Color> getThemeListColor() {
     return [
       AppColors.primarySwatch,
       Colors.brown,
       Colors.blue,
-      Colors.teal,
-      Colors.amber,
+      Colors.cyan,
+      Colors.green,
       Colors.blueGrey,
       Colors.deepOrange,
+    ];
+  }
+
+  static List<String> getThemeDesc() {
+    return [
+      '默认主题',
+      '主题1',
+      '主题2',
+      '主题3',
+      '主题4',
+      '主题5',
+      '主题6',
     ];
   }
 }
