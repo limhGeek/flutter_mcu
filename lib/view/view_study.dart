@@ -6,7 +6,7 @@
 
 import 'package:flutter/material.dart';
 
-class StudyView extends StatelessWidget {
+class StudyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

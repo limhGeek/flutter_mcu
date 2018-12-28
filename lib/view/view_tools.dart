@@ -6,7 +6,7 @@
 
 import 'package:flutter/material.dart';
 
-class ToolsView extends StatelessWidget {
+class ToolsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
