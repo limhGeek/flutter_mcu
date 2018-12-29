@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Config {
-  static const DEGAULT_IMG =
-      "http://img3.duitang.com/uploads/item/201601/14/20160114001813_LTUWP.thumb.700_0.jpeg";
+  static const DEGAULT_IMG = "images/default_head.jpg";
 
   static List<Color> getThemeListColor() {
     return [
