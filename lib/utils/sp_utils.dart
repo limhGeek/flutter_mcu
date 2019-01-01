@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter_mcu/bean/Token.dart';
+import 'package:flutter_mcu/bean/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SpUtils {
@@ -26,9 +29,21 @@ class SpUtils {
     spf.setString(_TOKEN, jsonToken);
   }
 
+  static Future<Token> getToken() async {
+    SharedPreferences spf = await SharedPreferences.getInstance();
+    if (spf.getString(_TOKEN) == null) return null;
+    return Token.fromJson(json.decode(spf.getString(_TOKEN)));
+  }
+
   static void saveUser(String jsonUser) async {
     SharedPreferences spf = await SharedPreferences.getInstance();
     spf.setString(_USER, jsonUser);
+  }
+
+  static Future<User> getUser() async {
+    SharedPreferences spf = await SharedPreferences.getInstance();
+    if (spf.getString(_USER) == null) return null;
+    return User.fromJson(json.decode(spf.getString(_USER)));
   }
 
   static void clearLogin() async {

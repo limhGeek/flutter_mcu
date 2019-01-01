@@ -9,6 +9,8 @@ import 'package:flutter_mcu/comm/net/Http.dart';
 import 'package:flutter_mcu/utils/comm_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_addtp.dart';
+import 'package:flutter_mcu/view/view_drawer.dart';
+import 'package:flutter_mcu/view/view_image.dart';
 import 'package:flutter_mcu/view/view_tpinfo.dart';
 
 class HomePage extends StatefulWidget {
@@ -49,6 +51,7 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MyDrawer(),
       appBar: AppBar(
         title: Text('论坛'),
         centerTitle: true,
@@ -294,21 +297,27 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
   Widget _imgItemView(String imgUrls) {
     List<String> str = imgUrls.split(',');
 
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (BuildContext context, int position) {
-        return Container(
-          width: MediaQuery.of(context).size.width / 3,
-          margin: EdgeInsets.only(right: 6.0),
-          child: CachedNetworkImage(
-            imageUrl: Api.BaseUrl + str[position],
-            errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-            fit: BoxFit.cover,
-          ),
-        );
-      },
-      itemCount: str.length,
-    );
+    return GestureDetector(
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int position) {
+            return Container(
+              width: MediaQuery.of(context).size.width / 3,
+              margin: EdgeInsets.only(right: 6.0),
+              child: CachedNetworkImage(
+                imageUrl: Api.BaseUrl + str[position],
+                errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                fit: BoxFit.cover,
+              ),
+            );
+          },
+          itemCount: str.length,
+        ),
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+            return ImagePage(str);
+          }));
+        });
   }
 
   Future<Null> _getData(bool isRefresh) async {

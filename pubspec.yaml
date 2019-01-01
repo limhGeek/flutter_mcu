@@ -48,6 +48,7 @@ flutter:
   assets:
   - images/default_head.jpg
   - images/pic_add.png
+  - images/ic_launcher.png
 
   fonts:
   - family: FontIcon

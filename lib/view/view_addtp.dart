@@ -4,9 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mcu/bean/Token.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
+import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/widget/iconfont.dart';
 import 'package:flutter_mcu/widget/view_loading.dart';
@@ -28,6 +30,13 @@ class _AddTpPage extends State<AddTpPage> {
   var pics = [];
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
+  Token token = Token.empty();
+
+  @override
+  void initState() {
+    super.initState();
+    _initParams();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +158,10 @@ class _AddTpPage extends State<AddTpPage> {
     );
   }
 
+  Future _initParams() async {
+    token = await SpUtils.getToken();
+  }
+
   Widget _imgItemView() {
     return ListView.builder(
       shrinkWrap: true,
@@ -189,9 +202,9 @@ class _AddTpPage extends State<AddTpPage> {
       if (images.length != 0) {
         params["imgsUrl"] = images.substring(0, images.length - 1);
       }
-      String token = "2cc50fec-e5cd-4c9c-96c3-289ab03c5174";
-      Http.post(Api.URL_ADDTOPICS, header: {"Token": token}, params: params,
-          successCallBack: (data) {
+      Http.post(Api.URL_ADDTOPICS,
+          header: {"Token": token.token},
+          params: params, successCallBack: (data) {
         Toast.show(context, '发布成功');
         setState(() {
           isSend = false;

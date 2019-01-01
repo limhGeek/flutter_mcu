@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mcu/bean/User.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
+import 'package:flutter_mcu/comm/redux/UserRedux.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
-import 'package:flutter_mcu/view/view_drawer.dart';
+import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_home.dart';
 import 'package:flutter_mcu/view/view_mine.dart';
 import 'package:flutter_mcu/view/view_study.dart';
@@ -11,11 +14,12 @@ import 'package:flutter_mcu/view/view_tools.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final store = Store<AppState>(appReducer,
       initialState: AppState(
+          user: User.empty(),
           themeData: ThemeData(primarySwatch: Config.getThemeListColor()[0])));
 
   @override
@@ -37,58 +41,72 @@ class MyHomePage extends StatefulWidget {
   MyHomePage(this.store);
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   PageController pageController;
   int page = 0;
+  int lastTime = 0;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      drawer: MyDrawer(),
-      backgroundColor: Colors.grey,
-      body: new PageView(
-        children: <Widget>[
-          new HomePage(),
-          new StudyPage(),
-          new ToolsPage(),
-          new MinePage()
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
-      ),
-      bottomNavigationBar: new BottomNavigationBar(
-        items: [
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.home), title: new Text("首页")),
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.laptop_chromebook), title: new Text("学习")),
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.featured_play_list), title: new Text("工具")),
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.person), title: new Text("我的")),
-        ],
-        type: BottomNavigationBarType.fixed,
-        fixedColor: Theme.of(context).primaryColor,
-        onTap: onTap,
-        currentIndex: page,
-      ),
-    );
+    return WillPopScope(
+        child: Scaffold(
+          backgroundColor: Colors.grey,
+          body: PageView(
+            children: <Widget>[
+              HomePage(),
+              StudyPage(),
+              ToolsPage(),
+              MinePage()
+            ],
+            controller: pageController,
+            onPageChanged: onPageChanged,
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home), title: Text("首页")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.laptop_chromebook), title: Text("学习")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.featured_play_list), title: Text("工具")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), title: Text("我的")),
+            ],
+            type: BottomNavigationBarType.fixed,
+            fixedColor: Theme.of(context).primaryColor,
+            onTap: onTap,
+            currentIndex: page,
+          ),
+        ),
+        onWillPop: () {
+          int newTime = DateTime.now().millisecondsSinceEpoch;
+          int result = newTime - lastTime;
+          lastTime = newTime;
+          if (result > 2000) {
+            Toast.show(context, '再按一次退出');
+          } else {
+            SystemNavigator.pop();
+          }
+          return null;
+        });
   }
 
   @override
   void initState() {
     super.initState();
-    pageController = new PageController(initialPage: this.page);
+    pageController = PageController(initialPage: this.page);
     _getConfig();
   }
 
   //初始化全局配置
   Future<Null> _getConfig() async {
     int theme = await SpUtils.getTheme();
+    User user = await SpUtils.getUser();
     setState(() {
+      widget.store.dispatch(UpdateUserAction(user));
       widget.store.dispatch(RefreshThemeDataAction(
           ThemeData(primarySwatch: Config.getThemeListColor()[theme])));
     });
