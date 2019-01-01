@@ -23,8 +23,12 @@ dependencies:
   event_bus: ^1.0.1
   flutter_redux: ^0.5.2
   shared_preferences: ^0.4.3
+  #图片缓存
   cached_network_image: any
-
+  #图片选择器
+  photo: ^0.1.8
+  #图片压缩
+  image_jpeg: ^1.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -42,7 +46,13 @@ flutter:
   uses-material-design: true
 
   assets:
-     - images/default_head.jpg
+  - images/default_head.jpg
+  - images/pic_add.png
+
+  fonts:
+  - family: FontIcon
+    fonts:
+    - asset: iconfont/iconfont.ttf
   # To add assets to your application, add an assets section, like this:
   #  - images/a_dot_ham.jpeg
 

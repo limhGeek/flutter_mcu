@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Config {
-  static const DEGAULT_IMG = "images/default_head.jpg";
+  static const ROUTER_TPINFO = "tpinfo";
+
+  static const ASSERT_HEAD_DEFAULT = "images/default_head.jpg";
+  static const ASSERT_PIC_ADD = "images/pic_add.png";
 
   static List<Color> getThemeListColor() {
     return [

@@ -1,8 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
-import 'package:flutter_mcu/utils/SpUtils.dart';
+import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -30,8 +31,12 @@ class _MyDrawer extends State<MyDrawer> {
                   style: TextStyle(fontSize: 26.0),
                 ),
                 accountEmail: Text(''),
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: NetworkImage(Config.DEGAULT_IMG),
+                currentAccountPicture: ClipOval(
+                  child: CachedNetworkImage(
+                    placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                    imageUrl: "",
+                    errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                  ),
                 ),
                 decoration: new BoxDecoration(
                   //用一个BoxDecoration装饰器提供背景图片
@@ -40,7 +45,7 @@ class _MyDrawer extends State<MyDrawer> {
               ),
               ListTile(
                 title: Text(
-                  '问题反馈',
+                  '我要分享',
                   style: TextStyle(fontSize: 16.0),
                 ),
                 onTap: () {},
@@ -127,8 +132,9 @@ class _MyDrawer extends State<MyDrawer> {
                             ),
                             onPressed: () {
                               SpUtils.saveTheme(index);
-                              store.dispatch(RefreshThemeDataAction(
-                                  ThemeData(primarySwatch: color[index])));
+                              store.dispatch(RefreshThemeDataAction(ThemeData(
+                                  primarySwatch: color[index],
+                                  primaryColorBrightness: Brightness.dark)));
                               Navigator.pop(context);
                             },
                           ),

@@ -7,19 +7,20 @@ import 'Api.dart';
 class Http {
   static const String _GET = "get";
   static const String _POST = "post";
+  static const String _PUT = "put";
   static Options _options = new Options(
       baseUrl: Api.BaseUrl, connectTimeout: 10000, receiveTimeout: 10000);
 
   static Dio _dio = new Dio(_options);
 
   //get请求
-  static void get(String url,
+  static Future get(String url,
       {Function successCallBack,
       Map<String, String> params,
       Map<String, String> header,
       String path,
       Function errorCallBack}) async {
-    _request(url, successCallBack,
+    await _request(url, successCallBack,
         method: _GET,
         params: params,
         header: header,
@@ -28,7 +29,7 @@ class Http {
   }
 
   //post请求
-  static void post(String url,
+  static Future post(String url,
       {Function successCallBack,
       Map<String, String> params,
       Map<String, String> header,
@@ -42,9 +43,54 @@ class Http {
         errorCallBack: errorCallBack);
   }
 
+  static Future put(String url,
+      {Function successCallBack,
+      Map<String, String> params,
+      Map<String, String> header,
+      String path,
+      Function errorCallBack}) async {
+    _request(url, successCallBack,
+        method: _PUT,
+        params: params,
+        header: header,
+        path: path,
+        errorCallBack: errorCallBack);
+  }
+
+  static Future upload(String url,
+      {Function successCallBack,
+      dynamic params,
+      Function errorCallBack}) async {
+    try {
+      Response response;
+      int statusCode;
+      String errorMsg;
+      if (null != params) {
+        response = await _dio.post(url, data: params);
+        statusCode = response.statusCode;
+        if (statusCode < 0) {
+          errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+          _handError(errorCallBack, errorMsg);
+          return;
+        }
+        print('上传结果：${response.data}');
+        if (successCallBack != null) {
+          int code = response.data['code'];
+          if (code == 0) {
+            successCallBack(response.data['data']);
+          } else {
+            _handError(errorCallBack, response.data['msg']);
+          }
+        }
+      }
+    } catch (execption) {
+      _handError(errorCallBack, execption.toString());
+    }
+  }
+
   //具体的还是要看返回数据的基本结构
   //公共代码部分
-  static void _request(String url, Function callBack,
+  static Future _request(String url, Function callBack,
       {String method,
       Map<String, String> params,
       Map<String, String> header,
@@ -84,6 +130,12 @@ class Http {
           url += paramStr;
         }
         response = await _dio.get(url);
+      } else if (method == _PUT) {
+        if (params != null && params.isNotEmpty) {
+          response = await _dio.put(url, data: params);
+        } else {
+          response = await _dio.put(url);
+        }
       } else {
         if (params != null && params.isNotEmpty) {
           response = await _dio.post(url, data: params);

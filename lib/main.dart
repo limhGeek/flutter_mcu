@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
-import 'package:flutter_mcu/utils/SpUtils.dart';
+import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/view/view_drawer.dart';
 import 'package:flutter_mcu/view/view_home.dart';
 import 'package:flutter_mcu/view/view_mine.dart';
