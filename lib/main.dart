@@ -64,22 +64,74 @@ class _MyHomePageState extends State<MyHomePage> {
             controller: pageController,
             onPageChanged: onPageChanged,
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home), title: Text("首页")),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.laptop_chromebook), title: Text("学习")),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.featured_play_list), title: Text("工具")),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), title: Text("我的")),
-            ],
-            type: BottomNavigationBarType.fixed,
-            fixedColor: Theme.of(context).primaryColor,
-            onTap: onTap,
-            currentIndex: page,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {},
+            child: Icon(Icons.add),
           ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: BottomAppBar(
+            color: Theme.of(context).primaryColor,
+            shape: CircularNotchedRectangle(),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                IconButton(
+                    icon: Icon(
+                      Icons.home,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      onTap(0);
+                    }),
+                IconButton(
+                    icon: Icon(
+                      Icons.laptop_chromebook,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      onTap(1);
+                    }),
+                Container(
+                  width: 10,
+                  height: 10,
+                ),
+                IconButton(
+                    icon: Icon(
+                      Icons.featured_play_list,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      onTap(2);
+                    }),
+                IconButton(
+                    icon: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      onTap(3);
+                    }),
+              ],
+            ),
+          ),
+//          bottomNavigationBar: BottomNavigationBar(
+//            items: [
+//              BottomNavigationBarItem(
+//                  icon: Icon(Icons.home), title: Text("首页")),
+//              BottomNavigationBarItem(
+//                  icon: Icon(Icons.laptop_chromebook), title: Text("学习")),
+//              BottomNavigationBarItem(
+//                  icon: Icon(Icons.featured_play_list), title: Text("工具")),
+//              BottomNavigationBarItem(
+//                  icon: Icon(Icons.person), title: Text("我的")),
+//            ],
+//            type: BottomNavigationBarType.fixed,
+//            fixedColor: Theme.of(context).primaryColor,
+//            onTap: onTap,
+//            currentIndex: page,
+//          ),
         ),
         onWillPop: () {
           int newTime = DateTime.now().millisecondsSinceEpoch;
