@@ -49,7 +49,8 @@ class _ImagePage extends State<ImagePage> {
               color: Colors.black87,
               child: Center(
                   child: CachedNetworkImage(
-                fit: BoxFit.cover,
+                fit: BoxFit.fitWidth,
+                width: MediaQuery.of(context).size.width,
                 errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
                 imageUrl: Api.BaseUrl + widget.images[index],
                 placeholder: CircularProgressIndicator(),

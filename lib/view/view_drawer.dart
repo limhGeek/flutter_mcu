@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcu/bean/User.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/view/view_image.dart';
 import 'package:flutter_mcu/view/view_login.dart';
+import 'package:flutter_mcu/view/view_user.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -32,18 +35,23 @@ class _MyDrawer extends State<MyDrawer> {
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountName: Text(
-                  user.userName ?? '51单片机助手',
-                  style: TextStyle(fontSize: 26.0),
+                  null == user || null == user.userName
+                      ? '51单片机助手'
+                      : user.userName,
+                  style: TextStyle(fontSize: 20.0),
                 ),
-                accountEmail: Text(user.phone != null
-                    ? user.phone.replaceAll(user.phone.substring(3, 7), "****")
-                    : ""),
+                accountEmail: Text(
+                    null == user || user.phone == null
+                        ? "用户未登录"
+                        : user.phone
+                            .replaceAll(user.phone.substring(3, 7), "****"),
+                    style: TextStyle(fontSize: 16.0)),
                 currentAccountPicture: GestureDetector(
                     child: ClipOval(
                       child: CachedNetworkImage(
                         fit: BoxFit.cover,
                         placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-                        imageUrl: user.imgUrl == null
+                        imageUrl: null == user || user.imgUrl == null
                             ? (Api.BaseUrl + "default_head.jpg")
                             : (Api.BaseUrl + user.imgUrl),
                         errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
@@ -56,6 +64,17 @@ class _MyDrawer extends State<MyDrawer> {
                   //用一个BoxDecoration装饰器提供背景图片
                   color: themeData.primaryColor,
                 ),
+              ),
+              ListTile(
+                title: Text(
+                  '个人中心',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                    return UserInfoPage();
+                  }));
+                },
               ),
               ListTile(
                 title: Text(
@@ -115,7 +134,7 @@ class _MyDrawer extends State<MyDrawer> {
   _openImage() async {
     User user = await SpUtils.getUser();
     List<String> str = List();
-    if (null == user.imgUrl) {
+    if (null == user || null == user.imgUrl) {
       str.add('default_head.jpg');
     } else {
       str.add(user.imgUrl);

@@ -131,27 +131,6 @@ class _AddTpPage extends State<AddTpPage> {
                     });
                   },
                 ),
-//            Container(
-//                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-//                child: Row(children: <Widget>[
-//                  Flexible(
-//                      child: new TextField(
-//                    onChanged: (String text) {
-//                      setState(() {
-//                        _isComposing = text.length > 0;
-//                      });
-//                    },
-//                    decoration: InputDecoration.collapsed(hintText: '发送消息'),
-//                  )),
-//                  Container(
-//                    margin: EdgeInsets.symmetric(horizontal: 4.0),
-//                    child: IconButton(
-//                        icon: Icon(Icons.send),
-//                        onPressed: _isComposing
-//                            ? () => _handleSubmitted(_textController.text)
-//                            : null),
-//                  )
-//                ]))
               ],
             ),
           )),
