@@ -53,7 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
-          backgroundColor: Colors.grey,
           body: PageView(
             children: <Widget>[
               HomePage(),
@@ -94,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap(1);
                     }),
                 Container(
-                  width: 10,
+                  width: MediaQuery.of(context).size.width/6,
                   height: 10,
                 ),
                 IconButton(
@@ -116,22 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-//          bottomNavigationBar: BottomNavigationBar(
-//            items: [
-//              BottomNavigationBarItem(
-//                  icon: Icon(Icons.home), title: Text("首页")),
-//              BottomNavigationBarItem(
-//                  icon: Icon(Icons.laptop_chromebook), title: Text("学习")),
-//              BottomNavigationBarItem(
-//                  icon: Icon(Icons.featured_play_list), title: Text("工具")),
-//              BottomNavigationBarItem(
-//                  icon: Icon(Icons.person), title: Text("我的")),
-//            ],
-//            type: BottomNavigationBarType.fixed,
-//            fixedColor: Theme.of(context).primaryColor,
-//            onTap: onTap,
-//            currentIndex: page,
-//          ),
         ),
         onWillPop: () {
           int newTime = DateTime.now().millisecondsSinceEpoch;
