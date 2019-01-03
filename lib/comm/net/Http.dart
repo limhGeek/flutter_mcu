@@ -161,7 +161,19 @@ class Http {
           _handError(errorCallBack, response.data['msg']);
         }
       }
-    } catch (exception) {
+    } on DioError catch (exception) {
+      String errorMsg;
+      if (exception.type == DioErrorType.CONNECT_TIMEOUT) {
+        errorMsg = "服务器异常";
+      } else if (exception.type == DioErrorType.RESPONSE) {
+        errorMsg = "响应超时";
+      } else if (exception.type == DioErrorType.RECEIVE_TIMEOUT) {
+        errorMsg = "响应超时";
+      } else {
+        errorMsg = "请求异常";
+      }
+      _handError(errorCallBack, errorMsg);
+    } on Exception catch (exception) {
       _handError(errorCallBack, exception.toString());
     }
   }

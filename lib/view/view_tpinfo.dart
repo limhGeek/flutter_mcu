@@ -88,11 +88,12 @@ class _TpInfoPage extends State<TpInfoPage> {
                                   margin: EdgeInsets.only(right: 8.0),
                                   child: ClipOval(
                                     child: CachedNetworkImage(
+                                      fit: BoxFit.cover,
                                       placeholder: Image.asset(
                                           Config.ASSERT_HEAD_DEFAULT),
                                       imageUrl: null == widget.topic.userImg
                                           ? ""
-                                          : widget.topic.userImg,
+                                          : Api.BaseUrl + widget.topic.userImg,
                                       errorWidget: Image.asset(
                                           Config.ASSERT_HEAD_DEFAULT),
                                     ),
@@ -331,8 +332,11 @@ class _TpInfoPage extends State<TpInfoPage> {
                     margin: EdgeInsets.only(right: 8.0),
                     child: ClipOval(
                       child: CachedNetworkImage(
+                        fit: BoxFit.cover,
                         placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-                        imageUrl: null == reply.userImg ? "" : reply.userImg,
+                        imageUrl: null == reply.userImg
+                            ? ""
+                            : Api.BaseUrl + reply.userImg,
                         errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
                       ),
                     ),
@@ -354,7 +358,7 @@ class _TpInfoPage extends State<TpInfoPage> {
                     ],
                   )),
                   Offstage(
-                    offstage: user.userId != reply.userId,
+                    offstage: null == user || user.userId != reply.userId,
                     child: GestureDetector(
                         onTap: () {
                           _delReply(reply);

@@ -24,9 +24,10 @@ class AddTpPage extends StatefulWidget {
 }
 
 class _AddTpPage extends State<AddTpPage> {
-  bool hideTitle = false;
+  bool hideTitle = true;
   int picCount = 0;
   bool isSend = false;
+  String _msg = "";
   var pics = [];
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
@@ -54,84 +55,86 @@ class _AddTpPage extends State<AddTpPage> {
       ),
       body: ProgressDialog(
           loading: isSend,
-          msg: '处理中...',
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Offstage(
-                  offstage: hideTitle,
-                  child: TextField(
-                    controller: _titleController,
+          msg: _msg,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Offstage(
+                    offstage: hideTitle,
+                    child: TextField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: '加个标题呦~',
+                        hintStyle: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.normal),
+                      ),
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextField(
+                    controller: _contentController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: '加个标题呦~',
+                      hintText: '尽情发挥吧~',
                       hintStyle: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.normal),
+                          color: Theme.of(context).disabledColor,
+                          letterSpacing: 2.0,
+                          wordSpacing: 10.0),
                     ),
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
+                    maxLines: 5,
+                    style: TextStyle(fontSize: 16.0, color: Colors.black),
                   ),
-                ),
-                TextField(
-                  controller: _contentController,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: '尽情发挥吧~',
-                    hintStyle: TextStyle(
-                        color: Theme.of(context).disabledColor,
-                        letterSpacing: 2.0,
-                        wordSpacing: 10.0),
-                  ),
-                  maxLines: 5,
-                  style: TextStyle(fontSize: 16.0, color: Colors.black),
-                ),
-                Container(
-                    height: 100.0,
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Offstage(
-                          offstage: pics.isEmpty,
-                          child: _imgItemView(),
+                  Container(
+                      height: 100.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Offstage(
+                            offstage: pics.isEmpty,
+                            child: _imgItemView(),
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                FontIcon.add,
+                                size: 60.0,
+                                color: Theme.of(context).highlightColor,
+                              ),
+                              onPressed: () {
+                                _pickImage();
+                              })
+                        ],
+                      )),
+                  GestureDetector(
+                    child: Container(
+                      width: 80,
+                      height: 24,
+                      margin: EdgeInsets.only(top: 10.0),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).highlightColor,
+                          borderRadius: BorderRadius.circular(15.0)),
+                      child: Center(
+                        child: Text(
+                          hideTitle ? '添加标题' : "隐藏标题",
+                          style: TextStyle(fontSize: 12.0),
                         ),
-                        IconButton(
-                            icon: Icon(
-                              FontIcon.add,
-                              size: 60.0,
-                              color: Theme.of(context).highlightColor,
-                            ),
-                            onPressed: () {
-                              _pickImage();
-                            })
-                      ],
-                    )),
-                GestureDetector(
-                  child: Container(
-                    width: 80,
-                    height: 24,
-                    margin: EdgeInsets.only(top: 10.0),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).highlightColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    child: Center(
-                      child: Text(
-                        hideTitle ? '添加标题' : "隐藏标题",
-                        style: TextStyle(fontSize: 12.0),
                       ),
                     ),
+                    onTap: () {
+                      setState(() {
+                        hideTitle = !hideTitle;
+                      });
+                    },
                   ),
-                  onTap: () {
-                    setState(() {
-                      hideTitle = !hideTitle;
-                    });
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           )),
     );
@@ -144,6 +147,7 @@ class _AddTpPage extends State<AddTpPage> {
   Widget _imgItemView() {
     return ListView.builder(
       shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
       scrollDirection: Axis.horizontal,
       itemBuilder: (BuildContext context, int position) {
         return Container(
@@ -166,6 +170,7 @@ class _AddTpPage extends State<AddTpPage> {
     } else {
       setState(() {
         isSend = true;
+        _msg = "发布中...";
       });
       String title = _titleController.text;
       String content = _contentController.text;
@@ -218,6 +223,10 @@ class _AddTpPage extends State<AddTpPage> {
         unselectedColor: Colors.white,
       ),
     );
+    setState(() {
+      isSend = true;
+      _msg = "正在上传...";
+    });
     imgList.forEach((asset) async {
       File imgFile = await asset.file;
       String newfile =
@@ -235,11 +244,12 @@ class _AddTpPage extends State<AddTpPage> {
           print('上传结果：$data');
           setState(() {
             pics.add('$data');
+            if (imgList.last == asset) {
+              isSend = false;
+            }
           });
         });
       }
     });
-
-    print(imgList);
   }
 }

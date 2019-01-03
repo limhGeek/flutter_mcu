@@ -41,10 +41,9 @@ class _MyDrawer extends State<MyDrawer> {
                   style: TextStyle(fontSize: 20.0),
                 ),
                 accountEmail: Text(
-                    null == user || user.phone == null
-                        ? "用户未登录"
-                        : user.phone
-                            .replaceAll(user.phone.substring(3, 7), "****"),
+                    null == user || user.profile == null
+                        ? "什么也没有"
+                        : user.profile,
                     style: TextStyle(fontSize: 16.0)),
                 currentAccountPicture: GestureDetector(
                     child: ClipOval(
@@ -64,17 +63,6 @@ class _MyDrawer extends State<MyDrawer> {
                   //用一个BoxDecoration装饰器提供背景图片
                   color: themeData.primaryColor,
                 ),
-              ),
-              ListTile(
-                title: Text(
-                  '个人中心',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                    return UserInfoPage();
-                  }));
-                },
               ),
               ListTile(
                 title: Text(

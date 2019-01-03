@@ -13,20 +13,25 @@ class User {
   String phone;
   String userName;
   String userSex;
+  String profile;
+  String coverImg;
 
-  User.fromParams(
-      {this.createAt,
-      this.permId,
-      this.updateAt,
-      this.userId,
-      this.userType,
-      this.birthday,
-      this.email,
-      this.imgUrl,
-      this.mac,
-      this.phone,
-      this.userName,
-      this.userSex});
+  User.fromParams({
+    this.createAt,
+    this.permId,
+    this.updateAt,
+    this.userId,
+    this.userType,
+    this.birthday,
+    this.email,
+    this.imgUrl,
+    this.mac,
+    this.phone,
+    this.userName,
+    this.userSex,
+    this.profile,
+    this.coverImg,
+  });
 
   User.fromJson(jsonRes) {
     createAt = jsonRes['createAt'];
@@ -41,11 +46,13 @@ class User {
     phone = jsonRes['phone'];
     userName = jsonRes['userName'];
     userSex = jsonRes['userSex'];
+    profile = jsonRes['profile'];
+    coverImg = jsonRes['coverImg'];
   }
 
   @override
   String toString() {
-    return '{"createAt": $createAt,"permId": $permId,"updateAt": $updateAt,"userId": $userId,"userType": $userType,"birthday": ${birthday != null ? '${json.encode(birthday)}' : 'null'},"email": ${email != null ? '${json.encode(email)}' : 'null'},"imgUrl": ${imgUrl != null ? '${json.encode(imgUrl)}' : 'null'},"mac": ${mac != null ? '${json.encode(mac)}' : 'null'},"phone": ${phone != null ? '${json.encode(phone)}' : 'null'},"userName": ${userName != null ? '${json.encode(userName)}' : 'null'},"userSex": ${userSex != null ? '${json.encode(userSex)}' : 'null'}}';
+    return '{"createAt": $createAt,"permId": $permId,"updateAt": $updateAt,"userId": $userId,"userType": $userType,"birthday": ${birthday != null ? '${json.encode(birthday)}' : 'null'},"email": ${email != null ? '${json.encode(email)}' : 'null'},"imgUrl": ${imgUrl != null ? '${json.encode(imgUrl)}' : 'null'},"mac": ${mac != null ? '${json.encode(mac)}' : 'null'},"phone": ${phone != null ? '${json.encode(phone)}' : 'null'},"userName": ${userName != null ? '${json.encode(userName)}' : 'null'},"userSex": ${userSex != null ? '${json.encode(userSex)}' : 'null'},"profile": ${profile != null ? '${json.encode(profile)}' : 'null'},"profile": ${coverImg != null ? '${json.encode(coverImg)}' : 'null'}}';
   }
 
   User.empty();

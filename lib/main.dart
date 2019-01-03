@@ -7,10 +7,11 @@ import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
 import 'package:flutter_mcu/comm/redux/UserRedux.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
+import 'package:flutter_mcu/view/view_addtp.dart';
 import 'package:flutter_mcu/view/view_home.dart';
-import 'package:flutter_mcu/view/view_mine.dart';
 import 'package:flutter_mcu/view/view_study.dart';
 import 'package:flutter_mcu/view/view_tools.dart';
+import 'package:flutter_mcu/view/view_user.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -53,69 +54,50 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
-          body: PageView(
-            children: <Widget>[
-              HomePage(),
-              StudyPage(),
-              ToolsPage(),
-              MinePage()
-            ],
-            controller: pageController,
-            onPageChanged: onPageChanged,
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: Icon(Icons.add),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: BottomAppBar(
-            color: Theme.of(context).primaryColor,
-            shape: CircularNotchedRectangle(),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            body: PageView(
               children: <Widget>[
-                IconButton(
-                    icon: Icon(
-                      Icons.home,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTap(0);
-                    }),
-                IconButton(
-                    icon: Icon(
-                      Icons.laptop_chromebook,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTap(1);
-                    }),
-                Container(
-                  width: MediaQuery.of(context).size.width/6,
-                  height: 10,
-                ),
-                IconButton(
-                    icon: Icon(
-                      Icons.featured_play_list,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTap(2);
-                    }),
-                IconButton(
-                    icon: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTap(3);
-                    }),
+                HomePage(),
+                StudyPage(),
+                ToolsPage(),
+                UserInfoPage()
               ],
+              controller: pageController,
+              onPageChanged: onPageChanged,
             ),
-          ),
-        ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return AddTpPage();
+                }));
+              },
+              child: Icon(Icons.add),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.home), title: Text("首页")),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.laptop_chromebook), title: Text("学习")),
+                BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.transparent,
+                    ),
+                    title: Text('发布')),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.featured_play_list), title: Text("工具")),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  title: Text("我的"),
+                ),
+              ],
+              type: BottomNavigationBarType.fixed,
+              fixedColor: Theme.of(context).primaryColor,
+              onTap: onTap,
+              currentIndex: page,
+            )),
         onWillPop: () {
           int newTime = DateTime.now().millisecondsSinceEpoch;
           int result = newTime - lastTime;
@@ -148,11 +130,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onTap(int index) {
+    if (index == 2) return;
+    if (index > 2) {
+      index = index - 1;
+    }
     pageController.animateToPage(index,
         duration: const Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   void onPageChanged(int value) {
+    if (value >= 2) {
+      value = value + 1;
+    }
     setState(() {
       this.page = value;
     });

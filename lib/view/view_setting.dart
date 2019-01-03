@@ -28,9 +28,11 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   String _userImg;
+  String _coverImg;
   var _userController = TextEditingController();
   var _phoneController = TextEditingController();
   var _emailController = TextEditingController();
+  var _profileController = TextEditingController();
   Token token;
   User user;
   bool _loading = false;
@@ -46,13 +48,18 @@ class _SettingPageState extends State<SettingPage> {
     token = await SpUtils.getToken();
     user = await SpUtils.getUser();
     if (null != user) {
-      _userImg = user.imgUrl;
-      _userController.value =
-          TextEditingValue(text: null == user.userName ? "" : user.userName);
-      _phoneController.value =
-          TextEditingValue(text: null == user.phone ? "" : user.phone);
-      _emailController.value =
-          TextEditingValue(text: null == user.email ? "" : user.email);
+      setState(() {
+        _userImg = user.imgUrl;
+        _coverImg = user.coverImg;
+        _userController.value =
+            TextEditingValue(text: null == user.userName ? "" : user.userName);
+        _phoneController.value =
+            TextEditingValue(text: null == user.phone ? "" : user.phone);
+        _emailController.value =
+            TextEditingValue(text: null == user.email ? "" : user.email);
+        _profileController.value =
+            TextEditingValue(text: null == user.profile ? "" : user.profile);
+      });
     }
   }
 
@@ -118,6 +125,21 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                 ),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  child: TextField(
+                    controller: _profileController,
+                    maxLines: 1,
+                    maxLength: 60,
+                    decoration: InputDecoration(
+                      hintText: '请输入个人简历',
+                      labelText: "个人简历",
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -133,17 +155,22 @@ class _SettingPageState extends State<SettingPage> {
           height: 200.0,
           fit: BoxFit.cover,
           placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-          imageUrl: _userImg == null
-              ? (Api.BaseUrl + "default_head.jpg")
-              : (Api.BaseUrl + _userImg),
+          imageUrl: null == _coverImg
+              ? (_userImg == null
+                  ? (Api.BaseUrl + "default_head.jpg")
+                  : (Api.BaseUrl + _userImg))
+              : (Api.BaseUrl + _coverImg),
           errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
         ),
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-          child: Container(
-            color: Colors.white.withOpacity(0.3),
-            width: MediaQuery.of(context).size.width,
-            height: 200.0,
+        Offstage(
+          offstage: null != _coverImg,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+            child: Container(
+              color: Colors.white.withOpacity(0.3),
+              width: MediaQuery.of(context).size.width,
+              height: 200.0,
+            ),
           ),
         ),
         Center(
@@ -177,7 +204,7 @@ class _SettingPageState extends State<SettingPage> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                          _pickImage();
+                          _pickImage(false);
                         },
                       ),
                     ),
@@ -192,11 +219,22 @@ class _SettingPageState extends State<SettingPage> {
             ),
           ],
         )),
+        Positioned(
+            bottom: 30.0,
+            right: 20.0,
+            child: IconButton(
+                icon: Icon(
+                  Icons.camera_alt,
+                  color: Theme.of(context).canvasColor,
+                ),
+                onPressed: () {
+                  _pickImage(true);
+                }))
       ],
     );
   }
 
-  Future _pickImage() async {
+  Future _pickImage(bool isCover) async {
     print('选择照片');
     List<AssetEntity> imgList = await PhotoPicker.pickAsset(
       context: context,
@@ -238,7 +276,11 @@ class _SettingPageState extends State<SettingPage> {
           Toast.show(context, '上传成功');
           setState(() {
             _loading = false;
-            _userImg = "$data";
+            if (isCover) {
+              _coverImg = "$data";
+            } else {
+              _userImg = "$data";
+            }
           });
         }, errorCallBack: (msg) {
           setState(() {
@@ -258,6 +300,11 @@ class _SettingPageState extends State<SettingPage> {
     if (null != _userImg) {
       params["imgUrl"] = _userImg;
     }
+    if (null != _coverImg) {
+      params["coverImg"] = _coverImg;
+    }
+
+    params["profile"] = _profileController.text;
     params["userName"] = _userController.text;
     params["phone"] = _phoneController.text;
     params["email"] = _emailController.text;

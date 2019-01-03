@@ -55,15 +55,6 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
       appBar: AppBar(
         title: Text('论坛'),
         centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                  return AddTpPage();
-                }));
-              })
-        ],
       ),
       body: RefreshIndicator(
           child: ListView.builder(
@@ -302,25 +293,6 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
       imgUrls = imgUrls.substring(0, imgUrls.length - 1);
     }
     List<String> str = imgUrls.split(',');
-//    return GridView.count(
-//      scrollDirection: Axis.horizontal,
-//      shrinkWrap: true,
-//      mainAxisSpacing: 6.0,
-//      crossAxisSpacing: 6.0,
-//      childAspectRatio: 1,
-//      crossAxisCount: 3,
-//      children: str.map((String _item) {
-//        return Container(
-//          width: MediaQuery.of(context).size.width / 3,
-//          margin: EdgeInsets.only(right: 6.0),
-//          child: CachedNetworkImage(
-//            imageUrl: Api.BaseUrl + _item,
-//            errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-//            fit: BoxFit.cover,
-//          ),
-//        );
-//      }).toList(),
-//    );
 
     return GestureDetector(
         child: ListView.builder(
