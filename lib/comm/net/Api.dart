@@ -1,6 +1,6 @@
 class Api {
-//  static const String BaseUrl = "http://192.168.1.6:8080/";
-  static const String BaseUrl = "http://limhgeek.vicp.io:38651/";
+  static const String BaseUrl = "http://192.168.1.6:8080/";
+//  static const String BaseUrl = "http://limhgeek.vicp.io:38651/";
 
   static const String URL_LOGIN = "api/v1/user/login";
   static const String URL_REGISTER = "api/v1/user/register";

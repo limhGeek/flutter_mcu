@@ -108,7 +108,10 @@ class _MyDrawer extends State<MyDrawer> {
               ),
               ListTile(
                 title: RaisedButton(
-                  onPressed: () {},
+                  onPressed: () =>
+                      Navigator.push(context, MaterialPageRoute(builder: (_) {
+                        return LoginPage();
+                      })),
                   padding: new EdgeInsets.only(
                       left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
                   color: themeData.errorColor,
