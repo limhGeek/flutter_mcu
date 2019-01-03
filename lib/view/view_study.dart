@@ -9,9 +9,13 @@ import 'package:flutter/material.dart';
 class StudyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Center(
-        child: new Text("学习"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('51'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Text("学习"),
       ),
     );
   }

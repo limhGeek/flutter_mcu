@@ -12,6 +12,7 @@ import 'package:flutter_mcu/view/view_addtp.dart';
 import 'package:flutter_mcu/view/view_drawer.dart';
 import 'package:flutter_mcu/view/view_image.dart';
 import 'package:flutter_mcu/view/view_tpinfo.dart';
+import 'package:flutter_mcu/view/view_user.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -143,20 +144,26 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  width: 40.0,
-                  height: 40.0,
-                  margin: EdgeInsets.only(right: 6.0),
-                  child: ClipOval(
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-                      imageUrl: null == topic.userImg
-                          ? ""
-                          : Api.BaseUrl + topic.userImg,
-                      errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                GestureDetector(
+                  child: Container(
+                    width: 40.0,
+                    height: 40.0,
+                    margin: EdgeInsets.only(right: 6.0),
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                        imageUrl: null == topic.userImg
+                            ? ""
+                            : Api.BaseUrl + topic.userImg,
+                        errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                      ),
                     ),
                   ),
+                  onTap: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) {
+                        return UserInfoPage(userId: topic.userId);
+                      })),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -320,7 +327,6 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
 
   Future<Null> _getData(bool isRefresh) async {
     if (isRefresh) {
-      _item.clear();
       _pageNum = 0;
       _isAll = false;
     }
@@ -329,7 +335,7 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
     setState(() {
       _isLoading = true;
     });
-    await Http.get(Api.URL_TOPICS + '/$_pageNum', successCallBack: (data) {
+    await Http.get(Api.URL_TOPIC_DATA + '/$_pageNum', successCallBack: (data) {
       print(json.encode(data));
       List list = data.map((m) => Topic.fromJson(m)).toList();
       if (null != list && list.length == 10) {
@@ -340,6 +346,9 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
         });
       }
       setState(() {
+        if (isRefresh) {
+          _item.clear();
+        }
         _isLoading = false;
         _item.addAll(list);
       });

@@ -6,12 +6,15 @@ class Api {
   static const String URL_REGISTER = "api/v1/user/register";
   static const String URL_USERINFO = "api/v1/user/info";
 
-  static const String URL_TOPICS = "api/v1/topic/list";
-  static const String URL_ADDTOPICS = "api/v1/topic/add";
+  static const String URL_TOPIC_DATA = "api/v1/topic/list";
+  static const String URL_TOPIC_ADD = "api/v1/topic/add";
   static const String URL_PRAISE = "api/v1/topic/praise";
-  static const String URL_REPLYS = "api/v1/reply/list";
-  static const String URL_ADDREPLY = "api/v1/reply/add";
-  static const String URL_DELREPLY = "api/v1/reply/del";
+  static const String URL_REPLY_DATA = "api/v1/reply/list";
+  static const String URL_REPLY_ADD = "api/v1/reply/add";
+  static const String URL_REPLY_DEL = "api/v1/reply/del";
+
+  static const String URL_FANS_DATA = "api/v1/fans/list";
+  static const String URL_FANS_FOLLOW = "api/v1/fans/follow";
 
   static const String URL_UPLOAD = "api/v1/upload";
 

@@ -186,7 +186,7 @@ class _AddTpPage extends State<AddTpPage> {
       if (images.length != 0) {
         params["imgsUrl"] = images.substring(0, images.length - 1);
       }
-      Http.post(Api.URL_ADDTOPICS,
+      Http.post(Api.URL_TOPIC_ADD,
           header: {"Token": token.token},
           params: params, successCallBack: (data) {
         Toast.show(context, '发布成功');

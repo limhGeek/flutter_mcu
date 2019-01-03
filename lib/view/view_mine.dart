@@ -9,23 +9,23 @@ import 'package:flutter_mcu/bean/User.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
+import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
-import 'package:flutter_mcu/widget/iconfont.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
-class UserInfoPage extends StatefulWidget {
-  final int userId;
-
-  UserInfoPage({this.userId});
+class MinePage extends StatefulWidget {
+  MinePage();
 
   @override
-  _UserInfoPageState createState() => _UserInfoPageState();
+  _MinePageState createState() => _MinePageState();
 }
 
-class _UserInfoPageState extends State<UserInfoPage> {
+class _MinePageState extends State<MinePage>
+    with AutomaticKeepAliveClientMixin {
   bool loading = false;
-  bool showBtn = false;
   User user;
   Token token;
   Fans fans;
@@ -37,45 +37,44 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
   Future initParams() async {
-    user = await SpUtils.getUser();
     token = await SpUtils.getToken();
-    setState(() {
-      showBtn = widget.userId == null || user.userId == widget.userId;
-    });
+    user = await SpUtils.getUser();
     getFansData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            flexibleSpace: _sliverHeader(),
-            expandedHeight: 250.0,
-            actions: <Widget>[
-              Offstage(
-                offstage: !showBtn,
-                child: IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (_) {
-                        return SettingPage();
-                      }));
-                    }),
+    return StoreBuilder<AppState>(
+      builder: (context, store) {
+        User user  = store.state.user;
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                flexibleSpace: _sliverHeader(user),
+                expandedHeight: 250.0,
+                actions: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return SettingPage();
+                        }));
+                      })
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _sliverHeader() {
-    String _coverImg = null != fans ? fans.coverImg : null;
-    String _userImg = null != fans ? fans.imgUrl : null;
+  Widget _sliverHeader(User user) {
+    String _coverImg = null != user ? user.coverImg : null;
+    String _userImg = null != user ? user.imgUrl : null;
     return Stack(
       children: <Widget>[
         CachedNetworkImage(
@@ -123,7 +122,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                    null == fans || fans.userName == null ? "|" : fans.userName,
+                    null == user || user.userName == null ? "|" : user.userName,
                     style: TextStyle(
                         fontSize: 20.0, color: Theme.of(context).canvasColor),
                   ),
@@ -155,27 +154,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 )
               ],
             )),
-        Positioned(
-            bottom: 0,
-            right: 20,
-            child: Offstage(
-              offstage: showBtn,
-              child: FloatingActionButton(
-                elevation: 0.0,
-                onPressed: () {
-                  if (null != fans) {
-                    if (fans.myFollow) {
-                      delFollow();
-                    } else {
-                      follow();
-                    }
-                  }
-                },
-                child: Icon(null != fans && fans.myFollow
-                    ? FontIcon.icon_followed
-                    : FontIcon.icon_follow),
-              ),
-            ))
       ],
     );
   }
@@ -183,12 +161,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
   Future getFansData() async {
     if (loading) return;
     loading = true;
-    int userId;
-    if (widget.userId != null) {
-      userId = widget.userId;
-    } else {
-      userId = null != user ? user.userId : null;
-    }
+    int userId = null != user ? user.userId : null;
+
     if (null == userId) return;
     Http.get(Api.URL_FANS_DATA + "?userId=$userId",
         header: {"Token": token.token}, successCallBack: (data) {
@@ -199,16 +173,18 @@ class _UserInfoPageState extends State<UserInfoPage> {
       });
     }, errorCallBack: (msg) {
       loading = false;
-      Toast.show(context, " $msg ");
+      if (msg == null) msg = "未知异常";
+      Toast.show(context, "$msg");
     });
   }
 
   Future follow() async {
     if (loading) return;
     loading = true;
+    int userId = null != user ? user.userId : null;
     Http.post(Api.URL_FANS_FOLLOW,
         header: {"Token": token.token},
-        params: {"userId": "${widget.userId}"}, successCallBack: (data) {
+        params: {"userId": "$userId"}, successCallBack: (data) {
       print("${json.encode(data)}");
       setState(() {
         loading = false;
@@ -223,9 +199,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
   Future delFollow() async {
     if (loading) return;
     loading = true;
+    int userId = null != user ? user.userId : null;
     Http.put(Api.URL_FANS_FOLLOW,
         header: {"Token": token.token},
-        params: {"userId": "${widget.userId}"}, successCallBack: (data) {
+        params: {"userId": "$userId"}, successCallBack: (data) {
       print("${json.encode(data)}");
       setState(() {
         loading = false;
@@ -236,4 +213,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       Toast.show(context, " $msg ");
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

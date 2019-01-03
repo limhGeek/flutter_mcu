@@ -408,7 +408,7 @@ class _TpInfoPage extends State<TpInfoPage> {
   }
 
   Future _getReply() async {
-    Http.get(Api.URL_REPLYS + "?topicId=${widget.topic.topicId}",
+    Http.get(Api.URL_REPLY_DATA + "?topicId=${widget.topic.topicId}",
         successCallBack: (data) {
       print('回复表：${json.encode(data)}');
       List list = data.map((m) => Reply.fromJson(m)).toList();
@@ -432,7 +432,7 @@ class _TpInfoPage extends State<TpInfoPage> {
       Map<String, String> params = Map();
       params['content'] = _sendScroller.text;
       params['topicId'] = '${widget.topic.topicId}';
-      Http.post(Api.URL_ADDREPLY,
+      Http.post(Api.URL_REPLY_ADD,
           header: {"Token": "${token.token}"},
           params: params, successCallBack: (_) {
         setState(() {
@@ -454,7 +454,7 @@ class _TpInfoPage extends State<TpInfoPage> {
       _loading = true;
     });
     Http.put(
-        Api.URL_DELREPLY +
+        Api.URL_REPLY_DEL +
             "?replyId=${reply.replyId}&topicId=${widget.topic.topicId}",
         successCallBack: (_) {
       setState(() {

@@ -9,9 +9,9 @@ import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_addtp.dart';
 import 'package:flutter_mcu/view/view_home.dart';
+import 'package:flutter_mcu/view/view_mine.dart';
 import 'package:flutter_mcu/view/view_study.dart';
-import 'package:flutter_mcu/view/view_tools.dart';
-import 'package:flutter_mcu/view/view_user.dart';
+import 'package:flutter_mcu/view/view_message.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -58,8 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 HomePage(),
                 StudyPage(),
-                ToolsPage(),
-                UserInfoPage()
+                MessagePage(),
+                MinePage()
               ],
               controller: pageController,
               onPageChanged: onPageChanged,
@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     title: Text('发布')),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.featured_play_list), title: Text("工具")),
+                    icon: Icon(Icons.mail), title: Text("消息")),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
                   title: Text("我的"),
