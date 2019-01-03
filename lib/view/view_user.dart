@@ -7,6 +7,7 @@ import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
+import 'package:flutter_mcu/widget/sliver_header.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class UserInfoPage extends StatefulWidget {
@@ -125,6 +126,14 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 )
               ],
             )),
+        Positioned(
+            bottom: 0,
+            right: 20,
+            child: FloatingActionButton(
+            elevation: 0.0,
+              onPressed: () {},
+              child: Icon(Icons.edit),
+            ))
       ],
     );
   }
