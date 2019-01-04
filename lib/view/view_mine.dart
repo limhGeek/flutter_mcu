@@ -12,9 +12,9 @@ import 'package:flutter_mcu/comm/net/Http.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
+import 'package:flutter_mcu/view/view_fans.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:redux/redux.dart';
 
 class MinePage extends StatefulWidget {
   MinePage();
@@ -46,11 +46,15 @@ class _MinePageState extends State<MinePage>
   Widget build(BuildContext context) {
     return StoreBuilder<AppState>(
       builder: (context, store) {
-        User user  = store.state.user;
+        User user = store.state.user;
         return Scaffold(
           body: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
+                leading: Icon(
+                  Icons.ac_unit,
+                  color: Colors.transparent,
+                ),
                 backgroundColor: Colors.transparent,
                 flexibleSpace: _sliverHeader(user),
                 expandedHeight: 250.0,
@@ -127,30 +131,41 @@ class _MinePageState extends State<MinePage>
                         fontSize: 20.0, color: Theme.of(context).canvasColor),
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      '发布 ${null == fans ? 0 : fans.fansNum}',
-                      style: TextStyle(color: Theme.of(context).canvasColor),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 10,
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                    ),
-                    Text('关注 ${null == fans ? 0 : fans.followNum}',
-                        style: TextStyle(color: Theme.of(context).canvasColor)),
-                    Container(
-                      width: 1,
-                      height: 10,
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                    ),
-                    Text('粉丝 ${null == fans ? 0 : fans.fansNum}',
-                        style: TextStyle(color: Theme.of(context).canvasColor)),
-                  ],
+                GestureDetector(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '发布 ${null == fans ? 0 : fans.topicNum}',
+                        style: TextStyle(color: Theme.of(context).canvasColor),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 10,
+                        margin: EdgeInsets.only(left: 10, right: 10),
+                      ),
+                      Text('关注 ${null == fans ? 0 : fans.followNum}',
+                          style:
+                              TextStyle(color: Theme.of(context).canvasColor)),
+                      Container(
+                        width: 1,
+                        height: 10,
+                        margin: EdgeInsets.only(left: 10, right: 10),
+                      ),
+                      Text('粉丝 ${null == fans ? 0 : fans.fansNum}',
+                          style:
+                              TextStyle(color: Theme.of(context).canvasColor)),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                      return FansPage(
+                        fans: fans,
+                      );
+                    }));
+                  },
                 )
               ],
             )),

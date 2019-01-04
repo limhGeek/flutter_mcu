@@ -11,6 +11,10 @@ class StudyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(
+          Icons.ac_unit,
+          color: Colors.transparent,
+        ),
         title: Text('51'),
         centerTitle: true,
       ),

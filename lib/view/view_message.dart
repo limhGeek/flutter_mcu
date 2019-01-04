@@ -10,6 +10,7 @@ class _MessagePageState extends State<MessagePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(Icons.ac_unit,color: Colors.transparent,),
         title: Text('消息'),
         centerTitle: true,
       ),
