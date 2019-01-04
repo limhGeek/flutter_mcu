@@ -68,6 +68,11 @@ class _UserInfoPageState extends State<UserInfoPage> {
               ),
             ],
           ),
+          SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+            return Container(
+                width: MediaQuery.of(context).size.width, height: 100.0);
+          }, childCount: fans.topicList.length)),
         ],
       ),
     );

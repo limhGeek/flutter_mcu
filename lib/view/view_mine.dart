@@ -29,6 +29,7 @@ class _MinePageState extends State<MinePage>
   User user;
   Token token;
   Fans fans;
+  String nullHint = "用户未登录";
 
   @override
   void initState() {
@@ -39,7 +40,15 @@ class _MinePageState extends State<MinePage>
   Future initParams() async {
     token = await SpUtils.getToken();
     user = await SpUtils.getUser();
-    getFansData();
+    setState(() {
+      if (null == user) {
+        nullHint = "用户未登录";
+      } else {
+        nullHint = "尚未发布任何动态";
+      }
+    });
+    print('初始化参数：$user');
+    _getFansData();
   }
 
   @override
@@ -48,32 +57,62 @@ class _MinePageState extends State<MinePage>
       builder: (context, store) {
         User user = store.state.user;
         return Scaffold(
-          body: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                leading: Icon(
-                  Icons.ac_unit,
-                  color: Colors.transparent,
-                ),
-                backgroundColor: Colors.transparent,
-                flexibleSpace: _sliverHeader(user),
-                expandedHeight: 250.0,
-                actions: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.settings),
-                      onPressed: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return SettingPage();
-                        }));
-                      })
+          body: RefreshIndicator(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                      leading: Icon(
+                        Icons.ac_unit,
+                        color: Colors.transparent,
+                      ),
+                      backgroundColor: Colors.transparent,
+                      flexibleSpace: _sliverHeader(user),
+                      expandedHeight: 250.0,
+                      actions: <Widget>[
+                        IconButton(
+                            icon: Icon(Icons.settings),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (_) {
+                                return SettingPage();
+                              }));
+                            })
+                      ]),
+                  _buttomView()
                 ],
               ),
-            ],
-          ),
+              onRefresh: () => _getFansData()),
         );
       },
     );
+  }
+
+  Widget _buttomView() {
+    if (null == fans) {
+      return SliverToBoxAdapter(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.only(top: 80.0),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.memory,
+                    size: 64, color: Theme.of(context).highlightColor),
+                Text(nullHint,
+                    style: TextStyle(
+                        color: Theme.of(context).highlightColor,
+                        fontSize: 18.0))
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+        return Container();
+      }, childCount: null == fans ? 0 : fans.topicList.length));
+    }
   }
 
   Widget _sliverHeader(User user) {
@@ -160,11 +199,13 @@ class _MinePageState extends State<MinePage>
                     ],
                   ),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                      return FansPage(
-                        fans: fans,
-                      );
-                    }));
+                    if (null != fans)
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) {
+                        return FansPage(
+                          fans: fans,
+                        );
+                      }));
                   },
                 )
               ],
@@ -173,13 +214,13 @@ class _MinePageState extends State<MinePage>
     );
   }
 
-  Future getFansData() async {
+  Future<Null> _getFansData() async {
     if (loading) return;
     loading = true;
     int userId = null != user ? user.userId : null;
-
+    print('加载个人数据');
     if (null == userId) return;
-    Http.get(Api.URL_FANS_DATA + "?userId=$userId",
+    await Http.get(Api.URL_FANS_DATA + "?userId=$userId",
         header: {"Token": token.token}, successCallBack: (data) {
       print("${json.encode(data)}");
       setState(() {
@@ -190,42 +231,6 @@ class _MinePageState extends State<MinePage>
       loading = false;
       if (msg == null) msg = "未知异常";
       Toast.show(context, "$msg");
-    });
-  }
-
-  Future follow() async {
-    if (loading) return;
-    loading = true;
-    int userId = null != user ? user.userId : null;
-    Http.post(Api.URL_FANS_FOLLOW,
-        header: {"Token": token.token},
-        params: {"userId": "$userId"}, successCallBack: (data) {
-      print("${json.encode(data)}");
-      setState(() {
-        loading = false;
-        fans.myFollow = true;
-      });
-    }, errorCallBack: (msg) {
-      loading = false;
-      Toast.show(context, " $msg ");
-    });
-  }
-
-  Future delFollow() async {
-    if (loading) return;
-    loading = true;
-    int userId = null != user ? user.userId : null;
-    Http.put(Api.URL_FANS_FOLLOW,
-        header: {"Token": token.token},
-        params: {"userId": "$userId"}, successCallBack: (data) {
-      print("${json.encode(data)}");
-      setState(() {
-        loading = false;
-        fans.myFollow = false;
-      });
-    }, errorCallBack: (msg) {
-      loading = false;
-      Toast.show(context, " $msg ");
     });
   }
 
