@@ -13,6 +13,7 @@ import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
 import 'package:flutter_mcu/widget/iconfont.dart';
+import 'package:flutter_mcu/widget/view_loading.dart';
 
 class UserInfoPage extends StatefulWidget {
   final int userId;
@@ -48,33 +49,47 @@ class _UserInfoPageState extends State<UserInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            flexibleSpace: _sliverHeader(),
-            expandedHeight: 250.0,
-            actions: <Widget>[
-              Offstage(
-                offstage: !showBtn,
-                child: IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (_) {
-                        return SettingPage();
-                      }));
-                    }),
+      body: ProgressDialog(
+          loading: loading,
+          msg: "加载中...",
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                flexibleSpace: _sliverHeader(),
+                expandedHeight: 250.0,
+                actions: <Widget>[
+                  Offstage(
+                    offstage: !showBtn,
+                    child: IconButton(
+                        icon: Icon(Icons.settings),
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (_) {
+                            return SettingPage();
+                          }));
+                        }),
+                  ),
+                  Offstage(
+                    offstage: showBtn,
+                    child: IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: () {
+
+                        }),
+                  ),
+                ],
               ),
+              SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                return Container(
+                    width: MediaQuery.of(context).size.width, height: 100.0);
+              },
+                      childCount: null == fans || null == fans.topicList
+                          ? 0
+                          : fans.topicList.length)),
             ],
-          ),
-          SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-            return Container(
-                width: MediaQuery.of(context).size.width, height: 100.0);
-          }, childCount: fans.topicList.length)),
-        ],
-      ),
+          )),
     );
   }
 
@@ -83,20 +98,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
     String _userImg = null != fans ? fans.imgUrl : null;
     return Stack(
       children: <Widget>[
-        CachedNetworkImage(
-          width: MediaQuery.of(context).size.width,
-          height: 250.0,
-          fit: BoxFit.cover,
-          placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-          imageUrl: null == _coverImg
-              ? (_userImg == null
-                  ? (Api.BaseUrl + "default_head.jpg")
-                  : (Api.BaseUrl + _userImg))
-              : (Api.BaseUrl + _coverImg),
-          errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-        ),
+        _userBgView(_coverImg, _userImg),
         Offstage(
-          offstage: _coverImg != null,
+          offstage: null==fans||_coverImg != null,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
             child: Container(
@@ -128,7 +132,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                    null == fans || fans.userName == null ? "|" : fans.userName,
+                    null == fans || fans.userName == null ? "" : fans.userName,
                     style: TextStyle(
                         fontSize: 20.0, color: Theme.of(context).canvasColor),
                   ),
@@ -139,7 +143,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '发布 ${null == fans ? 0 : fans.fansNum}',
+                      '发布 ${null == fans ? 0 : fans.topicNum}',
                       style: TextStyle(color: Theme.of(context).canvasColor),
                     ),
                     Container(
@@ -185,6 +189,28 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
+  Widget _userBgView(String _coverImg, String _userImg) {
+    if (null == fans) {
+      return Container(
+          width: MediaQuery.of(context).size.width,
+          height: 250.0,
+          color: Theme.of(context).primaryColor);
+    } else {
+      return CachedNetworkImage(
+        width: MediaQuery.of(context).size.width,
+        height: 250.0,
+        fit: BoxFit.cover,
+//        placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+        imageUrl: null == _coverImg
+            ? (_userImg == null
+                ? (Api.BaseUrl + "default_head.jpg")
+                : (Api.BaseUrl + _userImg))
+            : (Api.BaseUrl + _coverImg),
+        errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+      );
+    }
+  }
+
   Future getFansData() async {
     if (loading) return;
     loading = true;
@@ -203,7 +229,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
         fans = Fans.fromJson(data);
       });
     }, errorCallBack: (msg) {
-      loading = false;
+      setState(() {
+        loading = false;
+      });
       Toast.show(context, " $msg ");
     });
   }
@@ -217,7 +245,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       print("${json.encode(data)}");
       setState(() {
         loading = false;
-        fans.myFollow = true;
+        fans = Fans.fromJson(data);
       });
     }, errorCallBack: (msg) {
       loading = false;
@@ -234,7 +262,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       print("${json.encode(data)}");
       setState(() {
         loading = false;
-        fans.myFollow = false;
+        fans = Fans.fromJson(data);
       });
     }, errorCallBack: (msg) {
       loading = false;

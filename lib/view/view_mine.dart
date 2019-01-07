@@ -120,20 +120,9 @@ class _MinePageState extends State<MinePage>
     String _userImg = null != user ? user.imgUrl : null;
     return Stack(
       children: <Widget>[
-        CachedNetworkImage(
-          width: MediaQuery.of(context).size.width,
-          height: 250.0,
-          fit: BoxFit.cover,
-          placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-          imageUrl: null == _coverImg
-              ? (_userImg == null
-                  ? (Api.BaseUrl + "default_head.jpg")
-                  : (Api.BaseUrl + _userImg))
-              : (Api.BaseUrl + _coverImg),
-          errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
-        ),
+        _userBgView(),
         Offstage(
-          offstage: _coverImg != null,
+          offstage: null == user || _coverImg != null,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
             child: Container(
@@ -165,7 +154,9 @@ class _MinePageState extends State<MinePage>
                 Padding(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                    null == user || user.userName == null ? "|" : user.userName,
+                    null == user || user.userName == null
+                        ? "未登录"
+                        : user.userName,
                     style: TextStyle(
                         fontSize: 20.0, color: Theme.of(context).canvasColor),
                   ),
@@ -212,6 +203,28 @@ class _MinePageState extends State<MinePage>
             )),
       ],
     );
+  }
+
+  Widget _userBgView() {
+    if (null == user) {
+      return Container(
+          width: MediaQuery.of(context).size.width,
+          height: 250.0,
+          color: Theme.of(context).primaryColor);
+    } else {
+      return CachedNetworkImage(
+        width: MediaQuery.of(context).size.width,
+        height: 250.0,
+        fit: BoxFit.cover,
+        placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+        imageUrl: null == user.coverImg
+            ? (user.imgUrl == null
+                ? (Api.BaseUrl + "default_head.jpg")
+                : (Api.BaseUrl + user.imgUrl))
+            : (Api.BaseUrl + user.coverImg),
+        errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+      );
+    }
   }
 
   Future<Null> _getFansData() async {
