@@ -16,6 +16,9 @@ class Api {
   static const String URL_FANS_DATA = "api/v1/fans/list";
   static const String URL_FANS_FOLLOW = "api/v1/fans/follow";
 
+  static const String URL_MSG_SEND = "api/v1/msg/send";
+  static const String URL_MSG_LIST = "api/v1/msg/list";
+
   static const String URL_UPLOAD = "api/v1/upload";
 
 }

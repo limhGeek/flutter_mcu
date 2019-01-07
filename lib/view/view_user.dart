@@ -11,6 +11,7 @@ import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
+import 'package:flutter_mcu/view/view_chat.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
 import 'package:flutter_mcu/widget/iconfont.dart';
 import 'package:flutter_mcu/widget/view_loading.dart';
@@ -75,7 +76,14 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     child: IconButton(
                         icon: Icon(Icons.send),
                         onPressed: () {
-
+                          if (null != fans) {
+                            User user = User.fromParams(
+                                userId: fans.userId, userName: fans.userName,imgUrl: fans.imgUrl);
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (_) {
+                              return ChatPage(user);
+                            }));
+                          }
                         }),
                   ),
                 ],
@@ -100,7 +108,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       children: <Widget>[
         _userBgView(_coverImg, _userImg),
         Offstage(
-          offstage: null==fans||_coverImg != null,
+          offstage: null == fans || _coverImg != null,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
             child: Container(

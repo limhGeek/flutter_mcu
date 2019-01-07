@@ -21,6 +21,15 @@ class CommUtil{
     }
   }
 
+  static String getMsTime(int time){
+    if (DateUtil.getDateStrByMs(DateTime.now().millisecondsSinceEpoch,
+        format: DateFormat.YEAR_MONTH_DAY) ==
+        DateUtil.getDateStrByMs(time, format: DateFormat.YEAR_MONTH_DAY)) {
+      return DateUtil.getDateStrByMs(time,format: DateFormat.HOUR_MINUTE);
+    }else{
+      return DateUtil.getDateStrByMs(time,format: DateFormat.ZH_MONTH_DAY);
+    }
+  }
   static const RollupSize_Units = ["GB", "MB", "KB", "B"];
   /// 返回文件大小字符串
   static String getImageSize(int size) {
