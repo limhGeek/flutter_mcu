@@ -32,8 +32,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-//    _scrollControllsr.animateTo(_item.length * _ITEM_HEIGHT,
-//        duration: new Duration(seconds: 2), curve: Curves.ease);
     _initParams();
   }
 
@@ -93,16 +91,19 @@ class _ChatPageState extends State<ChatPage> {
     Letter letter = _item[index];
     if (letter.sendId == _user.userId) {
       return Row(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Offstage(offstage: _item.length - 1 != index, child: _msgStatus()),
             Card(
                 color: Theme.of(context).primaryColor,
                 child: Container(
+                    width: getContentSize(letter.content),
                     padding: EdgeInsets.all(10.0),
-                    child: Text('${letter.content}',
-                        style: TextStyle(color: Colors.white)))),
+                    child: Text(
+                      '${letter.content}',
+                      style: TextStyle(color: Colors.white, fontSize: 16.0),
+                    ))),
             Container(
                 margin: EdgeInsets.only(right: 10.0),
                 child: ClipOval(
@@ -120,6 +121,7 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
@@ -138,10 +140,20 @@ class _ChatPageState extends State<ChatPage> {
             Card(
                 color: Theme.of(context).canvasColor,
                 child: Container(
+                    width: getContentSize(letter.content),
                     padding: EdgeInsets.all(10.0),
-                    child: Text('${letter.content}'))),
+                    child: Text('${letter.content}',
+                        style: TextStyle(fontSize: 16.0)))),
           ]);
     }
+  }
+
+  double getContentSize(String content) {
+    double size = content.length * 16 + 20.0;
+    if (size > MediaQuery.of(context).size.width - 120) {
+      return MediaQuery.of(context).size.width - 120;
+    }
+    return size;
   }
 
   Widget _msgStatus() {

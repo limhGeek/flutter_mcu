@@ -120,9 +120,13 @@ class _MessagePageState extends State<MessagePage>
                           : letter.recvName,
                       style: TextStyle(fontSize: 16.0),
                     ),
-                    Text(letter.content,
-                        style:
-                            TextStyle(color: Theme.of(context).disabledColor)),
+                    Container(
+                        width: MediaQuery.of(context).size.width - 80,
+                        child: Text(letter.content,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Theme.of(context).disabledColor))),
                     Container(
                         margin: EdgeInsets.only(top: 6.0),
                         width: MediaQuery.of(context).size.width - 70.0,
