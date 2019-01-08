@@ -169,7 +169,11 @@ class Http {
   //处理异常
   static void _handError(Function errorCallback, String errorMsg) {
     if (errorCallback != null) {
-      errorCallback(errorMsg);
+      if (errorMsg.contains("DioErrorType.CONNECT_TIMEOUT")) {
+        errorCallback('连接超时');
+      } else {
+        errorCallback(errorMsg);
+      }
     }
     print("<net> errorMsg :" + errorMsg);
   }

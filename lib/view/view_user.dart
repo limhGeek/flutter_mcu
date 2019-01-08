@@ -5,14 +5,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcu/bean/Fans.dart';
 import 'package:flutter_mcu/bean/Token.dart';
+import 'package:flutter_mcu/bean/Topic.dart';
 import 'package:flutter_mcu/bean/User.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
+import 'package:flutter_mcu/utils/comm_utils.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_chat.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
+import 'package:flutter_mcu/view/view_tpinfo.dart';
 import 'package:flutter_mcu/widget/iconfont.dart';
 import 'package:flutter_mcu/widget/view_loading.dart';
 
@@ -50,55 +53,94 @@ class _UserInfoPageState extends State<UserInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ProgressDialog(
-          loading: loading,
-          msg: "加载中...",
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                flexibleSpace: _sliverHeader(),
-                expandedHeight: 250.0,
-                actions: <Widget>[
-                  Offstage(
-                    offstage: !showBtn,
-                    child: IconButton(
-                        icon: Icon(Icons.settings),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (_) {
-                            return SettingPage();
-                          }));
-                        }),
+      body: RefreshIndicator(
+          child: ProgressDialog(
+              loading: loading,
+              msg: "加载中...",
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    backgroundColor: Colors.transparent,
+                    flexibleSpace: _sliverHeader(),
+                    expandedHeight: 250.0,
+                    actions: <Widget>[
+                      Offstage(
+                        offstage: !showBtn,
+                        child: IconButton(
+                            icon: Icon(Icons.settings),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (_) {
+                                return SettingPage();
+                              }));
+                            }),
+                      ),
+                      Offstage(
+                        offstage: showBtn,
+                        child: IconButton(
+                            icon: Icon(Icons.send),
+                            onPressed: () {
+                              if (null != fans) {
+                                User user = User.fromParams(
+                                    userId: fans.userId,
+                                    userName: fans.userName,
+                                    imgUrl: fans.imgUrl);
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (_) {
+                                  return ChatPage(user);
+                                }));
+                              }
+                            }),
+                      ),
+                    ],
                   ),
-                  Offstage(
-                    offstage: showBtn,
-                    child: IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          if (null != fans) {
-                            User user = User.fromParams(
-                                userId: fans.userId, userName: fans.userName,imgUrl: fans.imgUrl);
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (_) {
-                              return ChatPage(user);
-                            }));
-                          }
-                        }),
-                  ),
+                  _buttomView(),
                 ],
-              ),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                return Container(
-                    width: MediaQuery.of(context).size.width, height: 100.0);
-              },
-                      childCount: null == fans || null == fans.topicList
-                          ? 0
-                          : fans.topicList.length)),
-            ],
-          )),
+              )),
+          onRefresh: () => getFansData()),
     );
+  }
+
+  Widget _buttomView() {
+    if (null == fans || null == fans.topicList || fans.topicList.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.only(top: 80.0),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.memory,
+                    size: 64, color: Theme.of(context).highlightColor),
+                Text("尚未发布任何动态",
+                    style: TextStyle(
+                        color: Theme.of(context).highlightColor,
+                        fontSize: 18.0))
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+        return GestureDetector(
+          child: _itemView(index),
+          onTap: () {
+            if (null != fans &&
+                fans.topicList != null &&
+                fans.topicList[index] != null) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                return TpInfoPage(fans.topicList[index]);
+              }));
+            }
+          },
+        );
+      },
+              childCount: null == fans || fans.topicList == null
+                  ? 0
+                  : fans.topicList.length));
+    }
   }
 
   Widget _sliverHeader() {
@@ -197,6 +239,117 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
+  Widget _itemView(int index) {
+    Topic topic = fans.topicList[index];
+    return Card(
+        child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                Row(children: <Widget>[
+                  ClipOval(
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      width: 36.0,
+                      height: 36.0,
+                      placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                      imageUrl: topic.userImg == null
+                          ? (Api.BaseUrl + "default_head.jpg")
+                          : (Api.BaseUrl + topic.userImg),
+                      errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                    ),
+                  ),
+                  Container(width: 10.0, height: 10.0),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        topic.userName,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                      Text(CommUtil.getTimeDiff(topic.replyAt),
+                          style: TextStyle(
+                              fontSize: 12.0,
+                              color: Theme.of(context).disabledColor)),
+                    ],
+                  )
+                ]),
+                Container(
+                    padding: EdgeInsets.all(10.0),
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(
+                        topic.title == null||topic.title.length==0 ? topic.content : topic.title,
+                        style: TextStyle(fontSize: 18.0))),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 10.0),
+                        width: 80.0,
+                        height: 40.0,
+                        child: Row(children: <Widget>[
+                          Icon(
+                            Icons.launch,
+                            size: 16.0,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          Container(
+                            width: 6.0,
+                          ),
+                          Text('分享',
+                              style: TextStyle(
+                                  color: Theme.of(context).disabledColor,
+                                  fontSize: 12.0))
+                        ])),
+                    Container(
+                        width: 80.0,
+                        height: 40.0,
+                        child: Row(children: <Widget>[
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 16.0,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          Container(
+                            width: 6.0,
+                          ),
+                          Text(
+                              topic.replayCount == 0
+                                  ? '评论'
+                                  : '${topic.replayCount}',
+                              style: TextStyle(
+                                  color: Theme.of(context).disabledColor,
+                                  fontSize: 12.0))
+                        ])),
+                    Container(
+                        height: 40.0,
+                        width: 40.0,
+                        margin: EdgeInsets.only(right: 10.0),
+                        child: Row(children: <Widget>[
+                          Icon(
+                            Icons.sentiment_satisfied,
+                            size: 16.0,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          Container(
+                            width: 6.0,
+                          ),
+                          Text(topic.praise == 0 ? '点赞' : '${topic.praise}',
+                              style: TextStyle(
+                                  color: Theme.of(context).disabledColor,
+                                  fontSize: 12.0))
+                        ]))
+                  ],
+                )
+              ],
+            )));
+  }
+
   Widget _userBgView(String _coverImg, String _userImg) {
     if (null == fans) {
       return Container(
@@ -208,13 +361,13 @@ class _UserInfoPageState extends State<UserInfoPage> {
         width: MediaQuery.of(context).size.width,
         height: 250.0,
         fit: BoxFit.cover,
-//        placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+        placeholder: Container(color: Theme.of(context).primaryColor),
         imageUrl: null == _coverImg
             ? (_userImg == null
                 ? (Api.BaseUrl + "default_head.jpg")
                 : (Api.BaseUrl + _userImg))
             : (Api.BaseUrl + _coverImg),
-        errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+        errorWidget: Container(color: Theme.of(context).primaryColor),
       );
     }
   }
@@ -229,7 +382,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       userId = null != user ? user.userId : null;
     }
     if (null == userId) return;
-    Http.get(Api.URL_FANS_DATA + "?userId=$userId",
+    await Http.get(Api.URL_FANS_DATA + "?userId=$userId",
         header: {"Token": token.token}, successCallBack: (data) {
       print("${json.encode(data)}");
       setState(() {

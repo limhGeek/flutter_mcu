@@ -10,7 +10,6 @@ class Toast {
     BuildContext context,
     String msg,
   ) async {
-    assert(msg != null);
     _msg = msg;
     _startedTime = DateTime.now();
     //获取OverlayState
@@ -57,7 +56,7 @@ class Toast {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: Text(
-            _msg,
+            null==_msg?" ":_msg,
             style: TextStyle(
               fontSize: 16.0,
               color: Colors.white,

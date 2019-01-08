@@ -22,16 +22,18 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   var _sendScroller = TextEditingController();
-
+  var _scrollControllsr = ScrollController();
   Token _token;
   User _user;
   bool _isSend = false;
   bool _sendFail = false;
-  var _item=[];
+  var _item = [];
 
   @override
   void initState() {
     super.initState();
+//    _scrollControllsr.animateTo(_item.length * _ITEM_HEIGHT,
+//        duration: new Duration(seconds: 2), curve: Curves.ease);
     _initParams();
   }
 
@@ -54,9 +56,8 @@ class _ChatPageState extends State<ChatPage> {
         children: <Widget>[
           Expanded(
               child: ListView.builder(
-                  itemCount: null == _item || _item.isEmpty
-                      ? 0
-                      : _item.length,
+                  controller: _scrollControllsr,
+                  itemCount: null == _item || _item.isEmpty ? 0 : _item.length,
                   itemBuilder: (context, index) {
                     return _itemView(context, index);
                   })),
@@ -80,6 +81,11 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Widget _itemView(BuildContext context, int index) {
     if (null == _item || _item.isEmpty || null == _user) {
       return Container();
@@ -90,9 +96,7 @@ class _ChatPageState extends State<ChatPage> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            Offstage(
-                offstage: _item.length - 1 != index,
-                child: _msgStatus()),
+            Offstage(offstage: _item.length - 1 != index, child: _msgStatus()),
             Card(
                 color: Theme.of(context).primaryColor,
                 child: Container(
@@ -119,7 +123,7 @@ class _ChatPageState extends State<ChatPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-                margin: EdgeInsets.only(right: 10.0,left: 10.0),
+                margin: EdgeInsets.only(right: 10.0, left: 10.0),
                 child: ClipOval(
                   child: CachedNetworkImage(
                     width: 40.0,
@@ -160,20 +164,20 @@ class _ChatPageState extends State<ChatPage> {
 
   Future _getMsgList() async {
     await Http.get(Api.URL_MSG_LIST,
-        params: {"userId":"${widget.user.userId}"},
+        params: {"userId": "${widget.user.userId}"},
         header: {"Token": _token == null ? "" : _token.token},
         successCallBack: (data) {
-          print('${json.encode(data)}');
-          List list = data.map((m) => Letter.fromJson(m)).toList();
-          if (null != list) {
-            setState(() {
-              _item.clear();
-              _item.addAll(list);
-            });
-          }
-        }, errorCallBack: (msg) {
-          Toast.show(context, msg);
+      print('${json.encode(data)}');
+      List list = data.map((m) => Letter.fromJson(m)).toList();
+      if (null != list) {
+        setState(() {
+          _item.clear();
+          _item.addAll(list);
         });
+      }
+    }, errorCallBack: (msg) {
+      Toast.show(context, msg);
+    });
   }
 
   Future _sendMsg(bool isRepeat) async {

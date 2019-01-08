@@ -5,15 +5,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcu/bean/Fans.dart';
 import 'package:flutter_mcu/bean/Token.dart';
+import 'package:flutter_mcu/bean/Topic.dart';
 import 'package:flutter_mcu/bean/User.dart';
 import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
 import 'package:flutter_mcu/comm/redux/AppState.dart';
+import 'package:flutter_mcu/utils/comm_utils.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_fans.dart';
 import 'package:flutter_mcu/view/view_setting.dart';
+import 'package:flutter_mcu/view/view_tpinfo.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class MinePage extends StatefulWidget {
@@ -47,7 +50,6 @@ class _MinePageState extends State<MinePage>
         nullHint = "尚未发布任何动态";
       }
     });
-    print('初始化参数：$user');
     _getFansData();
   }
 
@@ -88,7 +90,7 @@ class _MinePageState extends State<MinePage>
   }
 
   Widget _buttomView() {
-    if (null == fans) {
+    if (null == fans || null == fans.topicList || fans.topicList.isEmpty) {
       return SliverToBoxAdapter(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -110,7 +112,17 @@ class _MinePageState extends State<MinePage>
     } else {
       return SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
-        return Container();
+        return GestureDetector(
+            child: _itemView(index),
+            onTap: () {
+              if (null != fans &&
+                  fans.topicList != null &&
+                  fans.topicList[index] != null) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return TpInfoPage(fans.topicList[index]);
+                }));
+              }
+            });
       }, childCount: null == fans ? 0 : fans.topicList.length));
     }
   }
@@ -205,6 +217,129 @@ class _MinePageState extends State<MinePage>
     );
   }
 
+  Widget _itemView(int index) {
+    Topic topic = fans.topicList[index];
+    return Card(
+        child: Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                Stack(
+                  children: <Widget>[
+                    Row(children: <Widget>[
+                      ClipOval(
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          width: 36.0,
+                          height: 36.0,
+                          placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                          imageUrl: topic.userImg == null
+                              ? (Api.BaseUrl + "default_head.jpg")
+                              : (Api.BaseUrl + topic.userImg),
+                          errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+                        ),
+                      ),
+                      Container(width: 10.0, height: 10.0),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            topic.userName,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                          ),
+                          Text(CommUtil.getTimeDiff(topic.replyAt),
+                              style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Theme.of(context).disabledColor)),
+                        ],
+                      )
+                    ]),
+                    Positioned(
+                        right: 10.0,
+                        top: 10.0,
+                        child: GestureDetector(
+                            child: Text('删除',
+                                style: TextStyle(
+                                    color: Theme.of(context).hintColor)),
+                            onTap: () {}))
+                  ],
+                ),
+                Container(
+                    padding: EdgeInsets.all(10.0),
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(
+                        topic.title == null ? topic.content : topic.title,
+                        style: TextStyle(fontSize: 18.0))),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 10.0),
+                        width: 80.0,
+                        height: 40.0,
+                        child: Row(children: <Widget>[
+                          Icon(
+                            Icons.launch,
+                            size: 16.0,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          Container(
+                            width: 6.0,
+                          ),
+                          Text('分享',
+                              style: TextStyle(
+                                  color: Theme.of(context).disabledColor,
+                                  fontSize: 12.0))
+                        ])),
+                    Container(
+                        width: 80.0,
+                        height: 40.0,
+                        child: Row(children: <Widget>[
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 16.0,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          Container(
+                            width: 6.0,
+                          ),
+                          Text(
+                              topic.replayCount == 0
+                                  ? '评论'
+                                  : '${topic.replayCount}',
+                              style: TextStyle(
+                                  color: Theme.of(context).disabledColor,
+                                  fontSize: 12.0))
+                        ])),
+                    Container(
+                        height: 40.0,
+                        width: 40.0,
+                        margin: EdgeInsets.only(right: 10.0),
+                        child: Row(children: <Widget>[
+                          Icon(
+                            Icons.sentiment_satisfied,
+                            size: 16.0,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          Container(
+                            width: 6.0,
+                          ),
+                          Text(topic.praise == 0 ? '点赞' : '${topic.praise}',
+                              style: TextStyle(
+                                  color: Theme.of(context).disabledColor,
+                                  fontSize: 12.0))
+                        ]))
+                  ],
+                )
+              ],
+            )));
+  }
+
   Widget _userBgView() {
     if (null == user) {
       return Container(
@@ -216,13 +351,13 @@ class _MinePageState extends State<MinePage>
         width: MediaQuery.of(context).size.width,
         height: 250.0,
         fit: BoxFit.cover,
-        placeholder: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+        placeholder: Container(color: Theme.of(context).primaryColor),
         imageUrl: null == user.coverImg
             ? (user.imgUrl == null
                 ? (Api.BaseUrl + "default_head.jpg")
                 : (Api.BaseUrl + user.imgUrl))
             : (Api.BaseUrl + user.coverImg),
-        errorWidget: Image.asset(Config.ASSERT_HEAD_DEFAULT),
+        errorWidget: Container(color: Theme.of(context).primaryColor),
       );
     }
   }
