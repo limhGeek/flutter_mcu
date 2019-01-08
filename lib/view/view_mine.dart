@@ -264,7 +264,9 @@ class _MinePageState extends State<MinePage>
                             child: Text('删除',
                                 style: TextStyle(
                                     color: Theme.of(context).hintColor)),
-                            onTap: () {}))
+                            onTap: () {
+                              showMsgDialog(context, topic.topicId);
+                            }))
                   ],
                 ),
                 Container(
@@ -281,7 +283,6 @@ class _MinePageState extends State<MinePage>
                     Container(
                         margin: EdgeInsets.only(left: 10.0),
                         width: 80.0,
-                        height: 40.0,
                         child: Row(children: <Widget>[
                           Icon(
                             Icons.launch,
@@ -298,7 +299,6 @@ class _MinePageState extends State<MinePage>
                         ])),
                     Container(
                         width: 80.0,
-                        height: 40.0,
                         child: Row(children: <Widget>[
                           Icon(
                             Icons.chat_bubble_outline,
@@ -318,7 +318,6 @@ class _MinePageState extends State<MinePage>
                         ])),
                     Container(
                         height: 40.0,
-                        width: 40.0,
                         margin: EdgeInsets.only(right: 10.0),
                         child: Row(children: <Widget>[
                           Icon(
@@ -379,6 +378,52 @@ class _MinePageState extends State<MinePage>
       loading = false;
       if (msg == null) msg = "未知异常";
       Toast.show(context, "$msg");
+    });
+  }
+
+  void showMsgDialog(BuildContext context, int topicId) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text(
+              '提示',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            ),
+            content: Text('确定要删除该条内容么？'),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("取消"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              new FlatButton(
+                child: new Text("确定"),
+                onPressed: () {
+                  _delTopic(topicId);
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  Future _delTopic(int topicId) async {
+    Http.put(Api.URL_TOPIC_DEL,
+        params: {"topicId": "$topicId"},
+        header: {"Token": token.token}, successCallBack: (data) {
+      List list = data.map((m) => Topic.fromJson(m)).toList();
+      setState(() {
+        fans.topicList.clear();
+        list.forEach((tmp) {
+          Topic topic = tmp;
+          fans.topicList.add(topic);
+        });
+      });
+    }, errorCallBack: (msg) {
+      Toast.show(context, msg);
     });
   }
 

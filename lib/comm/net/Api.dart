@@ -8,6 +8,7 @@ class Api {
 
   static const String URL_TOPIC_DATA = "api/v1/topic/list";
   static const String URL_TOPIC_ADD = "api/v1/topic/add";
+  static const String URL_TOPIC_DEL = "api/v1/topic/del";
   static const String URL_PRAISE = "api/v1/topic/praise";
   static const String URL_REPLY_DATA = "api/v1/reply/list";
   static const String URL_REPLY_ADD = "api/v1/reply/add";

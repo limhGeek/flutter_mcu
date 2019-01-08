@@ -209,7 +209,6 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
                 child: Container(
                   margin: EdgeInsets.only(left: 10.0),
                   width: 80.0,
-                  height: 40.0,
                   child: Row(
                     children: <Widget>[
                       Icon(
@@ -234,7 +233,6 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
               GestureDetector(
                 child: Container(
                   width: 80.0,
-                  height: 40.0,
                   child: Row(
                     children: <Widget>[
                       Icon(
@@ -259,7 +257,6 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
               GestureDetector(
                 child: Container(
                   height: 40.0,
-                  width: 40.0,
                   margin: EdgeInsets.only(right: 10.0),
                   child: Row(
                     children: <Widget>[
@@ -296,6 +293,7 @@ class _HomePage extends State<HomePage> with AutomaticKeepAliveClientMixin {
   }
 
   Widget _imgItemView(String imgUrls) {
+    if (null == imgUrls || imgUrls.length == 0) return Container();
     if (imgUrls.endsWith(",")) {
       imgUrls = imgUrls.substring(0, imgUrls.length - 1);
     }
