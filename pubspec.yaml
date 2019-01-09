@@ -30,6 +30,9 @@ dependencies:
   #图片压缩
   image_jpeg: ^1.1.1
   flutter_spinkit: ^3.1.0
+  markdown: ^2.0.2
+  html: any
+  flutter_webview_plugin: any
 
 dev_dependencies:
   flutter_test:
