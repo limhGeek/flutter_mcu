@@ -74,10 +74,12 @@ class _MinePageState extends State<MinePage>
                         IconButton(
                             icon: Icon(Icons.settings),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (_) {
-                                return SettingPage();
-                              }));
+                              if (null != token) {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (_) {
+                                  return SettingPage();
+                                }));
+                              }
                             })
                       ]),
                   _buttomView()

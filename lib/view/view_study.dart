@@ -46,34 +46,44 @@ class StudyPage extends StatelessWidget {
                       ])),
                   onTap: () => Navigator.of(context)
                           .push(MaterialPageRoute(builder: (_) {
-                        return McuPage();
+                        return McuPage("51单片机教程", "MCU");
                       }))),
-              Card(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    Icon(
-                      FontIcon.lvzhou_lujing_guiji,
-                      size: 48.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Container(width: 10.0, height: 10.0),
-                    Text("汇编语言", style: btnTextStyle),
-                  ])),
-              Card(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    Icon(
-                      Icons.code,
-                      size: 48.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Container(width: 10.0, height: 10.0),
-                    Text("汇编指令", style: btnTextStyle),
-                  ])),
+              GestureDetector(
+                  child: Card(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                        Icon(
+                          FontIcon.lvzhou_lujing_guiji,
+                          size: 48.0,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Container(width: 10.0, height: 10.0),
+                        Text("汇编语言", style: btnTextStyle),
+                      ])),
+                  onTap: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) {
+                        return McuPage("汇编语言教程", "ASM");
+                      }))),
+              GestureDetector(
+                  child: Card(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                        Icon(
+                          Icons.code,
+                          size: 48.0,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Container(width: 10.0, height: 10.0),
+                        Text("汇编指令", style: btnTextStyle),
+                      ])),
+                  onTap: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) {
+                        return McuPage("汇编指令", "ORDER");
+                      }))),
               Card(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

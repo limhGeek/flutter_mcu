@@ -1,6 +1,6 @@
 class Api {
-//  static const String BaseUrl = "http://192.168.1.6:8080/";
-  static const String BaseUrl = "http://limhgeek.vicp.io:38651/";
+  static const String BaseUrl = "http://192.168.1.6:8080/";
+//  static const String BaseUrl = "http://limhgeek.vicp.io:38651/";
 
   static const String URL_LOGIN = "api/v1/user/login";
   static const String URL_REGISTER = "api/v1/user/register";
@@ -19,6 +19,8 @@ class Api {
 
   static const String URL_MSG_SEND = "api/v1/msg/send";
   static const String URL_MSG_LIST = "api/v1/msg/list";
+
+  static const String URL_COURSE_CATALOG = "api/v1/course/catalog";
 
   static const String URL_UPLOAD = "api/v1/upload";
 

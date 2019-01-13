@@ -171,6 +171,8 @@ class Http {
     if (errorCallback != null) {
       if (errorMsg.contains("DioErrorType.CONNECT_TIMEOUT")) {
         errorCallback('连接超时');
+      } else if (errorMsg.contains("DioErrorType.DEFAULT")) {
+        errorCallback('服务器异常');
       } else {
         errorCallback(errorMsg);
       }

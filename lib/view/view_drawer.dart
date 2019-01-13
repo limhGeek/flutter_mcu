@@ -10,7 +10,6 @@ import 'package:flutter_mcu/comm/redux/ThemeRedux.dart';
 import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/view/view_image.dart';
 import 'package:flutter_mcu/view/view_login.dart';
-import 'package:flutter_mcu/view/view_user.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -104,7 +103,7 @@ class _MyDrawer extends State<MyDrawer> {
                       left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
                   color: themeData.errorColor,
                   child: Text(
-                    '退出登录',
+                    null == user ? '去登录' : '退出登录',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
