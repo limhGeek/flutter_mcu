@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:flutter_mcu/bean/Course.dart';
@@ -7,7 +5,6 @@ import 'package:flutter_mcu/comm/config/Config.dart';
 import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
-import 'package:flutter_native_web/flutter_native_web.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class CoursePage extends StatefulWidget {
@@ -23,7 +20,6 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   Course course;
   bool isLoading = false;
-  WebController webController;
 
   @override
   void initState() {
@@ -57,14 +53,7 @@ class _CoursePageState extends State<CoursePage> {
                 color: Theme.of(context).disabledColor, fontSize: 16.0))
       ]));
     } else {
-      FlutterNativeWeb flutterWebView = new FlutterNativeWeb(
-        onWebCreated: onWebCreated,
-        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
-          Factory<OneSequenceGestureRecognizer>(
-            () => TapGestureRecognizer(),
-          ),
-        ].toSet(),
-      );
+
       String html = Config.HTML_HEAD
           .replaceAll('tttt', widget.title)
           .replaceAll('dddd', course.html)
@@ -82,15 +71,6 @@ class _CoursePageState extends State<CoursePage> {
     }
   }
 
-  void onWebCreated(webController) {
-    this.webController = webController;
-    this.webController.loadData(course.html);
-    this.webController.onPageStarted.listen((url) => print("Loading $url"));
-    this
-        .webController
-        .onPageFinished
-        .listen((url) => print("Finished loading $url"));
-  }
 
   Future _getCourse() async {
     if (isLoading) return;

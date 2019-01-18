@@ -7,9 +7,16 @@ class Course {
   String subTitle;
   String title;
   String type;
+  String url;
 
   Course.fromParams(
-      {this.html, this.readNum, this.id, this.subTitle, this.title, this.type});
+      {this.html,
+      this.readNum,
+      this.id,
+      this.subTitle,
+      this.title,
+      this.type,
+      this.url});
 
   factory Course(jsonStr) => jsonStr == null
       ? null
@@ -24,10 +31,11 @@ class Course {
     subTitle = jsonRes['subTitle'];
     title = jsonRes['title'];
     type = jsonRes['type'];
+    url = jsonRes['url'];
   }
 
   @override
   String toString() {
-    return '{"html": ${html != null ? '${json.encode(html)}' : 'null'},"readNum": $readNum,"id": $id,"subTitle": ${subTitle != null ? '${json.encode(subTitle)}' : 'null'},"title": ${title != null ? '${json.encode(title)}' : 'null'},"type": ${type != null ? '${json.encode(type)}' : 'null'}}';
+    return '{"html": ${html != null ? '${json.encode(html)}' : 'null'},"readNum": $readNum,"id": $id,"subTitle": ${subTitle != null ? '${json.encode(subTitle)}' : 'null'},"title": ${title != null ? '${json.encode(title)}' : 'null'},"type": ${type != null ? '${json.encode(type)}' : 'null'},"url": ${url != null ? '${json.encode(url)}' : 'null'}}';
   }
 }

@@ -5,6 +5,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mcu/view/study/mcu_web.dart';
+import 'package:flutter_mcu/view/study/view_cprogram.dart';
 import 'package:flutter_mcu/view/study/view_mcu.dart';
 import 'package:flutter_mcu/widget/iconfont.dart';
 
@@ -84,19 +86,25 @@ class StudyPage extends StatelessWidget {
                           .push(MaterialPageRoute(builder: (_) {
                         return McuPage("汇编指令", "ORDER");
                       }))),
-              Card(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    Icon(
-                      FontIcon.Programming,
-                      size: 48.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Container(width: 10.0, height: 10.0),
-                    Text("C语言基础", style: btnTextStyle),
-                  ])),
+              GestureDetector(
+                child: Card(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                      Icon(
+                        FontIcon.Programming,
+                        size: 48.0,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      Container(width: 10.0, height: 10.0),
+                      Text("C语言教程", style: btnTextStyle),
+                    ])),
+                onTap: () =>
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                      return CProgramPage("C语言教程", 'C');
+                    })),
+              ),
               Card(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
