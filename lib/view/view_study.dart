@@ -5,7 +5,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mcu/view/study/mcu_web.dart';
 import 'package:flutter_mcu/view/study/view_cprogram.dart';
 import 'package:flutter_mcu/view/study/view_mcu.dart';
 import 'package:flutter_mcu/widget/iconfont.dart';
@@ -105,32 +104,42 @@ class StudyPage extends StatelessWidget {
                       return CProgramPage("C语言教程", 'C');
                     })),
               ),
-              Card(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    Icon(
-                      FontIcon.hanshu,
-                      size: 48.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Container(width: 10.0, height: 10.0),
-                    Text("C函数库", style: btnTextStyle),
-                  ])),
-              Card(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    Icon(
-                      FontIcon.suanfa,
-                      size: 48.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Container(width: 10.0, height: 10.0),
-                    Text("经典算法", style: btnTextStyle),
-                  ])),
+              GestureDetector(
+                  child: Card(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                        Icon(
+                          FontIcon.hanshu,
+                          size: 48.0,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Container(width: 10.0, height: 10.0),
+                        Text("C函数库", style: btnTextStyle),
+                      ])),
+                  onTap: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) {
+                        return CProgramPage("C函数库", 'C_FUNC');
+                      }))),
+              GestureDetector(
+                  child: Card(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                        Icon(
+                          FontIcon.suanfa,
+                          size: 48.0,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Container(width: 10.0, height: 10.0),
+                        Text("C排序算法", style: btnTextStyle),
+                      ])),
+                  onTap: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) {
+                        return CProgramPage("C排序算法", 'C_SORT');
+                      }))),
             ]));
   }
 }

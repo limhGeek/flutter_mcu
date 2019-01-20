@@ -9,9 +9,9 @@ import 'package:flutter_mcu/utils/sp_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
 import 'package:flutter_mcu/view/view_addtp.dart';
 import 'package:flutter_mcu/view/view_home.dart';
+import 'package:flutter_mcu/view/view_message.dart';
 import 'package:flutter_mcu/view/view_mine.dart';
 import 'package:flutter_mcu/view/view_study.dart';
-import 'package:flutter_mcu/view/view_message.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController;
   int page = 0;
   int lastTime = 0;
+  User user;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
+                if (user == null) {
+                  Toast.show(context, '请先登录');
+                  return;
+                }
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) {
                   return AddTpPage();
                 }));
@@ -121,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //初始化全局配置
   Future<Null> _getConfig() async {
     int theme = await SpUtils.getTheme();
-    User user = await SpUtils.getUser();
+    user = await SpUtils.getUser();
     setState(() {
       widget.store.dispatch(UpdateUserAction(user));
       widget.store.dispatch(RefreshThemeDataAction(

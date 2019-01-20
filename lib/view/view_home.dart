@@ -8,7 +8,6 @@ import 'package:flutter_mcu/comm/net/Api.dart';
 import 'package:flutter_mcu/comm/net/Http.dart';
 import 'package:flutter_mcu/utils/comm_utils.dart';
 import 'package:flutter_mcu/utils/toast_utils.dart';
-import 'package:flutter_mcu/view/view_addtp.dart';
 import 'package:flutter_mcu/view/view_drawer.dart';
 import 'package:flutter_mcu/view/view_image.dart';
 import 'package:flutter_mcu/view/view_tpinfo.dart';

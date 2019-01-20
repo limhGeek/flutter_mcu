@@ -16,14 +16,31 @@ class WebInfoPage extends StatefulWidget {
 
 class _WebInfoPage extends State<WebInfoPage> {
   bool isLoading = false;
+  FlutterWebviewPlugin flutterWebviewPlugin = FlutterWebviewPlugin();
 
   @override
   void initState() {
     super.initState();
     print('${widget.title}https://tdnr.gitee.io/limh/${widget.url}?height=0');
+    flutterWebviewPlugin.onStateChanged.listen((wvs) {
+      print(wvs.type);
+      if (wvs.type == WebViewState.startLoad) {
+        isLoading = true;
+      } else if (wvs.type == WebViewState.finishLoad) {
+        isLoading = false;
+      }
+      setState(() {});
+    });
+    flutterWebviewPlugin.onUrlChanged.listen((url) {
+      print('url change:$url');
+      if (!url.contains('height=0')) {
+        flutterWebviewPlugin.stopLoading();
+        url = '$url?height=0';
+        flutterWebviewPlugin.reloadUrl(url);
+      }
+    });
   }
 
-//  FlutterWebviewPlugin _flutterWebviewPlugin = FlutterWebviewPlugin();
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
@@ -33,5 +50,11 @@ class _WebInfoPage extends State<WebInfoPage> {
           child:
               SpinKitWave(color: Theme.of(context).primaryColor, size: 30.0)),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    flutterWebviewPlugin.dispose();
   }
 }
